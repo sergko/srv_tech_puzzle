@@ -1,4 +1,6 @@
 apt install -y vagrant virtualbox docker.io
+#virtualbox #=v5
+#virtualbox-6.0
 #Vagrant:
 #* Unknown configuration section 'disksize'.
 #* Unknown configuration section 'vbguest'.
@@ -11,3 +13,7 @@ apt install -y vagrant virtualbox docker.io
 #vagrant plugin install vagrant-disksize
 #vagrant plugin install vagrant-triggers
 #vagrant plugin install vagrant-vbguest
+
+#FEDORA30
+#vagrant/vagrant
+#yum groupinstall "X Window System" KDE
