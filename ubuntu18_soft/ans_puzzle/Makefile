@@ -12,7 +12,7 @@ umount_net:
 	umount /net/smb_umate_nata/
 
 add_link:
-	@ln -s ../srv_tech_puzzle/ubuntu18_soft/ans_puzzle $pwd
+	@ln -s ../../../../ansible-role-openvpn  ./roles/ansi-role-ovpn
 
 ans_new_role:
 	@cd roles && ansible-galaxy init vncserver_inst
