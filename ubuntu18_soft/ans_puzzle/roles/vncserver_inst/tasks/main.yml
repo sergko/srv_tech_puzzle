@@ -1,0 +1,13 @@
+---
+# tasks file for vncserver_inst
+
+- apt: "update_cache=True"
+  become: yes
+  failed_when: False
+
+- apt: "name={{ item }} state=present"
+  become: yes
+  with_items:
+    - python-setuptools
+    - python-pip
+

@@ -1,0 +1,20 @@
+---
+
+- hosts: vpn
+  gather_facts: true
+  roles:
+    - {role: ansi-role-ovpn, clients: [sergko, serg],
+                        openvpn_port: 4300}
+
+
+
+# - name: install vncserver
+#   hosts: all # or spec group or host only
+#   become: yes
+#   roles:
+#     - { role: vncserver_inst, when: ansible_system == 'Linux' }    # только если ОС линух
+# #    - owncloud_install_local # безусловный и безпараметричный запуск роли
+# # а так с параметрами
+# ## tags: install
+
+
