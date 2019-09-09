@@ -7,5 +7,5 @@ test -d roles || mkdir roles
 #cd roles && ansible-galaxy init install_from_deb
 #cd roles && ansible-galaxy init install_from_deb_n_config
 #cd roles && ansible-galaxy init owncloud_install_local
-cd roles && ansible-galaxy init owncloud_prereq_local
-
+# cd roles && ansible-galaxy init owncloud_prereq_local
+cd roles && ansible-galaxy init usrv_prep_soft

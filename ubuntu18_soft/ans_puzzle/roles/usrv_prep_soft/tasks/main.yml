@@ -1,0 +1,19 @@
+---
+# tasks file for usrv_prep_soft
+- name: install common soft
+  become: yes
+  block:
+    - name: "apt cache update"
+      apt: "update_cache=True"
+      # become: yes
+      failed_when: False
+
+    - name: "apt soft install"
+      apt: "name={{ item }} state=present"
+      become: yes
+      with_items:
+        - python-setuptools
+        - python-pip
+        - mc
+        - yakuake
+  
