@@ -1,2 +1,17 @@
 ---
 # defaults file for usrv_prep_soft
+apt_state: "{{ apt_inst | default ('present') }}" #install
+# apt_state: "{{ apt_inst | default ('absent')}" #remove
+# "value of state must be one of: absent, build-dep, installed, latest, present, removed, present, got: true"
+apt_soft_common: true
+apt_soft_dev: true
+apt_soft_kde: true
+apt_soft_sys: true
+apt_soft_srv: true
+apt_soft_gui: true
+apt_soft_net: true
+
+
+
+
+

@@ -1,6 +1,6 @@
 ---
 # tasks file for usrv_prep_soft
-- name: install common soft
+- name: install common soft from off repos
   become: yes
   block:
     - name: "apt cache update"
@@ -8,12 +8,275 @@
       # become: yes
       failed_when: False
 
-    - name: "apt soft install"
-      apt: "name={{ item }} state=present"
+    - name: "apt soft install common"
+      apt: "name={{ item }} state={{apt_state}}"
+      become: yes
+      with_items:
+        - mc
+        - yakuake
+      when: "{{ apt_soft_common is defined and  apt_soft_common | default (true) }}"
+  
+    - name: "apt soft install dev"
+      apt: "name={{ item }} state={{apt_state}}"
       become: yes
       with_items:
         - python-setuptools
         - python-pip
+        - python3.7
+        - python3-pip
+        - ipython
+        - python-xattr
+        - git
+        - git-gui
+        - git-doc
+        - gitweb
+        - git-man
+        - code #VSCode
+      when: "{{ apt_soft_dev is defined and  apt_soft_dev | default (true) }}"
+      # pip install cython pytest numpy
+
+    - name: "apt soft install KDE env"
+      apt: "name={{ item }} state={{apt_state}}"
+      become: yes
+      with_items:
+        - kde-plasma-desktop #minimum 90mb
+        #gdm3 NEED
+        # - kde-standard # std 150mb
+        # - kde-full #full 500mb
+        # - mate-desktop-environment-extras
+        # - xfce4
+        # - cinnamon 
+        # - mate
+      when: "{{ apt_soft_kde is defined and  apt_soft_kde | default (true) }}"
+
+    - name: "apt soft install system tools"
+      apt: "name={{ item }} state={{apt_state}}"
+      become: yes
+      with_items:
+        - tree
+        - unrar
+        - screen
+        - acl
+        - attr
+        - atop
+        - htop
+        - iotop
+        # - badblocks
+        # - btrfs-progs 
+        # - btrfs-tools
+        # - reiserfsprogs
+        #dumpet xorriso squashfs-tools gddrescue isolinux # CD TOOLS
+      when: "{{ apt_soft_sys is defined and  apt_soft_sys | default (true) }}"
+      
+# Check+fix for Badblocks EXT4
+# Check and fix BADs on physical disk
+# https://wiki.archlinux.org/index.php/badblocks
+# Read-Write distructive test
+# badblocks -wsv /dev/<device> -o <path to output log file with bad sectors>
+
+
+    - name: "apt soft install system services"
+      apt: "name={{ item }} state={{apt_state}}"
+      become: yes
+      with_items:
+        - mysql-client
+        - nfs-kernel-server
+        - nfs-common
+        - samba
+        - samba-common
+        - cifs-utils
+        - smbclient
+        # - wine
+        # - qt4wine
+        # - etcher #- usb flash writer/backuper ( e.g. for memtest86)
+      when: "{{ apt_soft_srv is defined and  apt_soft_srv | default (true) }}"
+
+    - name: "apt soft install GUI tools"
+      apt: "name={{ item }} state={{apt_state}}"
+      become: yes
+      with_items:
+        - 4pane # filemanager, ISO, SMB,NFS mounter
+        - gmountiso
+        - caja
+        - caja-eiciel
+        - firefox
+        - google-chrome-stable
+        - vlc
+        - code #VSCode
+        - krdc
+        # - skype
+        # - telegram
+        # - slack        
+      when: "{{ apt_soft_gui is defined and  apt_soft_gui | default (true) }}"
+
+    - name: "apt soft install Network tools"
+      apt: "name={{ item }} state={{apt_state}}"
+      become: yes
+      with_items:
+        - ioping
+        - iftop
+        - fio
+        - ethtool    
+        - links        # console browser!!!!
+        - ntp 
+        - ntdate
+        - net-tools
+        # - bridge-utils
+        # - vnc
+        # - vnc4server
+        # - curl3         # for viber
+        # - libcurl3      # for viber
+        # - curl4         # LATEST as curl unsuitable) FOR VIBER
+        # - libcurl4      # LATEST       
+
+      when: "{{ apt_soft_net is defined and  apt_soft_net | default (true) }}"
+
+# curl3 with libcurl3 for viber (curl4 as curl unsuitable
+# etcher - usb flash writer/backuper ( e.g. for memtest86)
+# vnc
+#  startkde & # run  to KDE
+# gnome-session & for GNOME or fvwm2 & for FVWM2
+# twm &
+# mate-session &  
+
+#SOFT LIST
+  # - python3
+  # - ipython
+  # - qbittorrent
+  # - 4pane
+  # - gmountiso
+  # - mc
+  # - tree
+  # - links
+  # - unrar
+  # - yakuake
+  # - screen
+  # - acl
+  # - attr
+  # - python-xattr
+  # - atop
+  # - htop
+  # - iotop
+  # - ioping
+  # - iftop
+  # - fio
+  # - ethtool
+  # - git
+  # - git-gui
+  # - git-doc
+  # - gitweb
+  # - git-man
+  # - mysql-client
+  # #    - nfs-kernel-server
+  # #    - nfs-common
+  # #    - samba
+  # - samba-common
+  # - cifs-utils
+  # - smbclient
+  # #    - wine
+#/
+
+- name: install common soft from 3rd party repos
+  become: yes
+  block:
+    - name: "apt cache update"
+      apt: "update_cache=True"
+      # become: yes
+      failed_when: False
+
+    - name: "apt soft install common"
+      apt: "name={{ item }} state={{apt_state}}"
+      become: yes
+      with_items:
         - mc
         - yakuake
+      when: "{{ apt_soft_common is defined and  apt_soft_common | default (true) }}"
   
+    - name: "apt soft install dev"
+      apt: "name={{ item }} state={{apt_state}}"
+      become: yes
+      with_items:
+        - python-setuptools
+        - python-pip
+        - python3.7
+        - python3-pip
+        - ipython
+        - python-xattr
+        - git
+        - git-gui
+        - git-doc
+        - gitweb
+        - git-man
+      when: "{{ apt_soft_dev is defined and  apt_soft_dev | default (true) }}"
+# git gui # to start GUI
+
+# ADDDDD
+  #----
+  # Flash Plugin
+  # sudo add-apt-repository "deb http://archive.canonical.com/ $(lsb_release -sc) partner"
+  # sudo apt update
+  # sudo apt install adobe-flashplugin browser-plugin-freshplayer-pepperflash
+  # (-> tab crashed)
+  # OR manually (worked!!!)
+  # 1.Download from adobe .tgz archive
+  # 2. unpack only libflashplayer.so to ~/.mozilla/plugins folder (create if not exists)
+  # 3. start firefox
+  #----
+  # sudo add-apt-repository ppa:notepadqq-team/notepadqq
+  # sudo apt-get install notepadqq
+  #----
+  # sudo apt-add-repository ppa:jtaylor/keepass -y
+  # sudo apt-get update && sudo apt-get install keepass2 -y
+  #----
+  # dpkg -i teamviewer_13.1.3026_amd64.deb # apt --fix-broken install # installed with dependancy
+  #----
+  # vmware workstation 14
+  # raw therapee
+  #----
+  # # DOCKER
+  #     REQUIREMENTS
+  #     sudo apt-get install \
+  #       apt-transport-https \
+  #       ca-certificates \
+  #       curl \
+  #       software-properties-common
+  #       curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  # apt install docker docker.io
+  # Docker build permissions
+  #     sudo usermod -a -G docker $USER
+  #----
+  # /opt/teamviewer/tv_bin/teamviewerd -d
+  # teamviewer info
+  # teamviewer daemon status / start / stop / restart
+  # systemctl stop teamviewerd
+  # teamviewer daemon restart
+  # teamviewer setup
+  # apt --fix-broken install
+  # apt autoremove
+  # aptitude hold nginx # зафиксирует установленный пакет, чтобы избежать его случайного обновления.
+  #----
+  #automounter
+  # https://www.evernote.com/Home.action?_sourcePage=2kw7epqUQELiMUD9T65RG_YvRLZ-1eYO3fqfqRu0fynRL_1nukNa4gH1t86pc1SP&__fp=ppUEsDiCwYg3yWPvuidLz-TPR6I9Jhx8&hpts=1568104729078&showSwitchService=true&usernameImmutable=false&rememberMe=true&login=&login=Sign+in&login=true&hptsh=6FHLszDvkW%2BtJF9cyXnDYp4cEXo%3D#n=24b3a19a-2803-4cec-9194-ec36ac36b0cd&s=s622&ses=4&sh=2&sds=5&
+  #----
+  #MSTeams
+  #Jetbrains PyCharm etc
+  #Gitcracken
+  #Shutter #screensoter
+  # Dynalist
+  #Cisco any connect
+
+#ZFS+ sharing
+# see on evernotes https://www.evernote.com/Home.action?_sourcePage=2kw7epqUQELiMUD9T65RG_YvRLZ-1eYO3fqfqRu0fynRL_1nukNa4gH1t86pc1SP&__fp=ppUEsDiCwYg3yWPvuidLz-TPR6I9Jhx8&hpts=1568104729078&showSwitchService=true&usernameImmutable=false&rememberMe=true&login=&login=Sign+in&login=true&hptsh=6FHLszDvkW%2BtJF9cyXnDYp4cEXo%3D#n=b56d4cfe-05a8-45fc-ae1d-39846a321cef&s=s622&ses=4&sh=2&sds=5&
+
+  # #++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  # owncloud
+  # Jenkins
+  # Kuber
+  # GitLab
+  # SNMP
+  # zabbix
+  # graphana
+  # prometeus
+  # veeam
+  # Video camera
+  # + cloude
