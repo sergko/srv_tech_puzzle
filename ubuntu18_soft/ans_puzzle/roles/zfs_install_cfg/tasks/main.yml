@@ -1,0 +1,195 @@
+---
+# tasks file for zfs_install_cfg
+
+# https://www.evernote.com/Home.action?_sourcePage=2kw7epqUQELiMUD9T65RG_YvRLZ-1eYO3fqfqRu0fynRL_1nukNa4gH1t86pc1SP&__fp=ppUEsDiCwYg3yWPvuidLz-TPR6I9Jhx8&hpts=1568104729078&showSwitchService=true&usernameImmutable=false&rememberMe=true&login=&login=Sign+in&login=true&hptsh=6FHLszDvkW%2BtJF9cyXnDYp4cEXo%3D#n=9405e026-3699-46e8-b002-ae0dd2d9eb26&s=s622&ses=4&sh=2&sds=5&
+# Install ZFS starting ubuntu 16.04
+# sudo apt install zfs-zed zfsutils-linux
+# In addition to be able to have ZFS on root, install:
+# sudo apt install zfs-initramfs 
+# apt install zfs-dkms # for each new kernel runned ????
+
+- name: ZFS install 
+  become: yes
+  block:
+    - name: "apt cache update"
+      apt: "update_cache=True"
+      # become: yes
+      failed_when: False
+
+    - name: "apt soft install ZFS components"
+      apt: "name={{ item }} state={{apt_state}}"
+      become: yes
+      with_items:
+        - zfs-zed 
+        - zfsutils-linux
+        - zfs-dkms
+        # - nfs-kernel-server
+        # - nfs-common
+        # - samba
+        # - samba-common
+        # - cifs-utils
+        # - smbclient        
+      when: "{{ apt_tool_zfs is defined and  apt_tool_zfs | default (false) }}"
+
+# https://askubuntu.com/questions/936023/zfs-modules-are-not-loaded
+# sudo modprobe zfs
+# or sudo /sbin/modprobe zfs
+# zpool import -a
+#==>> zpool import -a -f
+# zpool list
+# zpool status
+# zfs list
+# zpool get all rpool
+# zfs get all zfs2
+
+
+
+# ztest ???   command 'ztest' from deb zfsutils-linux      
+
+# https://docs.ansible.com/ansible/latest/modules/zpool_facts_module.html
+# https://docs.ansible.com/ansible/latest/modules/zfs_facts_module.html
+# https://docs.ansible.com/ansible/2.4/zfs_module.html
+
+
+
+- name: ZFS config
+  become: yes
+  block:
+    # no datasets available
+
+  #   - name: zpool import -a
+  #     command: zpool import -a
+  #     register: zpool_import
+  #   - debug:
+  #      msg: {{zpool_import}}
+  #   # - name: zpool import -a -f
+  #   #   command: zpool import -a -f
+  #   #   register: zpool_import_force
+  #   #   when: zpool_import
+  #   # - debug:
+  #   #    msg: {{zpool_import_force}}
+  # # Gather facts about ZFS pool rpool
+  # # - zpool_facts: pool=rpool
+
+
+  # Gather facts about ZFS pool zfs
+    # - zpool_facts: pool=zfs
+    # - debug: msg='{{ ansible_zfs_pools }}'
+    # - zpool_facts: pool=zfs2
+    # - zpool_facts: pool=zfs3
+    - zpool_facts: pool=ztest 
+    # - zpool_facts: pool=ztest/ztest1    # does not exist
+    # Gather space usage about all imported ZFS pools
+    - debug: msg='{{ ansible_zfs_pools }}'
+      # with_items: '{{ ansible_zfs_pools }}'
+    - debug: msg='{{ item }}'
+      with_items: '{{ ansible_zfs_pools }}'
+
+    - name: Gather facts about ZFS dataset ztest/ztest1 
+      zfs_facts:
+        dataset: ztest/ztest1 
+
+    - name: Report space usage on ZFS filesystems under ztest/ztest1 
+      zfs_facts:
+        name: ztest/ztest1 
+        recurse: yes
+        type: filesystem
+# "sharenfs": "on", "sharesmb": "off"
+    - debug:
+        msg: 'ZFS dataset {{ item.name }} consumes {{ item.used }} of disk space.'
+      with_items: '{{ ansible_zfs_datasets }}'
+    - debug:
+        msg: '{{ item }}'
+      with_items: '{{ ansible_zfs_datasets }}'
+# https://ansible-manual.readthedocs.io/en/latest/zfs_module.html
+
+# Create a new volume called myvol in pool rpool.
+# - zfs: name=rpool/myvol state=present volsize=10M
+#     - name: updatee ZFS filesystems ztest/ztest1 sharesmb=on
+#       zfs:
+#         name: ztest/ztest1 
+#         state: present
+#         sharesmb: on
+#       # become: yes
+#       failed_when: False
+#         # Passing zfs properties as arbitrary parameters to the zfs module is deprecated.  Send them as a dictionary in the extra_zfs_properties parameter instead.
+#         # https://docs.ansible.com/ansible/latest/modules/zfs_module.html
+#     - name: Gather facts about ZFS dataset ztest/ztest1 
+#       zfs_facts:
+#         dataset: ztest/ztest1 
+#         properties: 'sharesmb,sharenfs'
+#     - debug:
+#         msg: '{{ item }}'
+#       with_items: '{{ ansible_zfs_datasets }}'
+#     - debug:
+#         msg: 'ZFS dataset {{ item.name }} sharesmb= {{ item.sharesmb }} '
+#       with_items: '{{ ansible_zfs_datasets }}'
+# #FIX
+# Passing zfs properties as arbitrary parameters to the zfs module is deprecated.  Send them as a dictionary in the extra_zfs_properties parameter instead.
+# https://docs.ansible.com/ansible/latest/modules/zfs_module.html
+    
+    - name: Create a new volume called myvol in pool rpool.
+      zfs:
+        # name: ztest/ztest1 
+        name: "{{ item }}" 
+        state: present
+        extra_zfs_properties:
+          sharesmb: on
+          sharenfs: off
+      # become: yes
+      failed_when: False      
+      with_items: 
+        - zfs
+        - zfs2
+        - zfs3
+
+    - debug:
+        msg: '{{ item }}'
+      with_items: '{{ ansible_zfs_datasets }}'
+    - debug:
+        msg: 'ZFS dataset {{ item.name }} sharesmb= {{ item.sharesmb }} sharenfs= {{ item.sharenfs }} '
+      with_items: '{{ ansible_zfs_datasets }}'
+
+#REPLACED BY HEADERS - SEE NOTIFY BOTTOM
+    # - name: restart service zfs-share, in all cases, also issue daemon-reload to pick up config changes
+    #   systemd:
+    #     state: restarted
+    #     daemon_reload: yes
+    #     name: zfs-share
+
+
+
+# zfs share -a # start sharing that was set by "zfs set sharenfs *"
+# zfs unshare -a # stop sharing
+# systemctl restart zfs-share
+# # - zpool_facts: properties='free,size'
+
+    # - debug: msg='ZFS pool {{ item.name }} has {{ item.free }} free space out of {{ item.size }}.'
+    #   with_items: '{{ ansible_zfs_pools }}'
+
+    # - zfs_facts: pool=zfs
+    # - debug: msg='{{ ansible_zfs_pools }}'
+# zfs                         
+# zfs/srv6tbr_1p              
+# zfs/srv6tbr_1p/docker_hub   
+# zfs2                        
+# zfs2/srv6tbr_2p             
+# zfs2/srv6tbr_2p/zfs05tb_kvm 
+# zfs3                        
+# zfs3/srv6tbr_3p             
+# zfs3/srv6tbr_3p/videocams   
+# ztest                       
+# ztest/ztest1   
+
+  # # Gather space usage about all imported ZFS pools
+  # - zpool_facts: properties='free,size'
+
+  # - debug: msg='ZFS pool {{ item.name }} has {{ item.free }} free space out of {{ item.size }}.'
+  #   with_items: '{{ ansible_zfs_pools }}'
+
+  when: conf_zfs
+  notify:
+  - restart zfs-share
+
+- name: zfs share -a
+  command: fs share -a

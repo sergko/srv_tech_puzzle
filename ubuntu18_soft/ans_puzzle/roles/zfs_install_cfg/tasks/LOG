@@ -1,0 +1,447 @@
+
+zfs                         
+zfs/srv6tbr_1p              
+zfs/srv6tbr_1p/docker_hub   
+zfs2                        
+zfs2/srv6tbr_2p             
+zfs2/srv6tbr_2p/zfs05tb_kvm 
+zfs3                        
+zfs3/srv6tbr_3p             
+zfs3/srv6tbr_3p/videocams   
+ztest                       
+ztest/ztest1           
+
+# zpool import -a
+  # >> cannot import 'zfs': pool was previously in use from another system.
+  # >> Last accessed by umate (hostid=7f0101) at Fri Aug 23 00:21:29 2019
+  # >> The pool can be imported, use 'zpool import -f' to import the pool.
+  #==>> zpool import -a -f
+
+# root@usrv:~# zpool list
+  # NAME    SIZE  ALLOC   FREE  EXPANDSZ   FRAG    CAP  DEDUP  HEALTH  ALTROOT
+  # zfs    2,72T  2,38T   346G         -    42%    87%  1.00x  ONLINE  -
+  # zfs2   2,72T  2,53T   190G         -    22%    93%  1.00x  ONLINE  -
+  # zfs3   2,72T  2,28T   447G         -    34%    83%  1.00x  ONLINE  -
+  # ztest  1,62G  2,97M  1,62G         -     5%     0%  1.00x  ONLINE  -
+  # root@usrv:~# zpool status
+  #   pool: zfs
+  #  state: ONLINE
+  # status: Some supported features are not enabled on the pool. The pool can
+  #         still be used, but some features are unavailable.
+  # action: Enable all features using 'zpool upgrade'. Once this is done,
+  #         the pool may no longer be accessible by software that does not support
+  #         the features. See zpool-features(5) for details.
+  #   scan: scrub repaired 64K in 30h10m with 0 errors on Mon Aug 12 06:34:19 2019
+  # config:
+
+  #         NAME                                                STATE     READ WRITE CKSUM
+  #         zfs                                                 ONLINE       0     0     0
+  #           raidz1-0                                          ONLINE       0     0     0
+  #             ata-WDC_WD30EZRX-00MMMB0_WD-WMAWZ0264083-part1  ONLINE       0     0     0
+  #             ata-WDC_WD30EZRX-00MMMB0_WD-WMAWZ0265314-part1  ONLINE       0     0     0
+  #             ata-ST3000DM001-1ER166_W7P00DKS-part1           ONLINE       0     0     0
+
+  # errors: No known data errors
+
+  #   pool: zfs2
+  #  state: ONLINE
+  # status: Some supported features are not enabled on the pool. The pool can
+  #         still be used, but some features are unavailable.
+  # action: Enable all features using 'zpool upgrade'. Once this is done,
+  #         the pool may no longer be accessible by software that does not support
+  #         the features. See zpool-features(5) for details.
+  #   scan: scrub repaired 0B in 30h54m with 0 errors on Mon Aug 12 07:18:27 2019
+  # config:
+
+  #         NAME                                                STATE     READ WRITE CKSUM
+  #         zfs2                                                ONLINE       0     0     0
+  #           raidz1-0                                          ONLINE       0     0     0
+  #             ata-WDC_WD30EZRX-00MMMB0_WD-WMAWZ0264083-part2  ONLINE       0     0     0
+  #             ata-WDC_WD30EZRX-00MMMB0_WD-WMAWZ0265314-part2  ONLINE       0     0     0
+  #             ata-ST3000DM001-1ER166_W7P00DKS-part2           ONLINE       0     0     0
+
+  # errors: No known data errors
+
+  #   pool: zfs3
+  #  state: ONLINE
+  # status: Some supported features are not enabled on the pool. The pool can
+  #         still be used, but some features are unavailable.
+  # action: Enable all features using 'zpool upgrade'. Once this is done,
+  #         the pool may no longer be accessible by software that does not support
+  #         the features. See zpool-features(5) for details.
+  #   scan: scrub repaired 0B in 33h15m with 0 errors on Mon Aug 12 09:39:58 2019
+  # config:
+
+  #         NAME                                                STATE     READ WRITE CKSUM
+  #         zfs3                                                ONLINE       0     0     0
+  #           raidz1-0                                          ONLINE       0     0     0
+  #             ata-WDC_WD30EZRX-00MMMB0_WD-WMAWZ0264083-part3  ONLINE       0     0     0
+  #             ata-WDC_WD30EZRX-00MMMB0_WD-WMAWZ0265314-part3  ONLINE       0     0     0
+  #             ata-ST3000DM001-1ER166_W7P00DKS-part3           ONLINE       0     0     0
+
+  # errors: No known data errors
+
+  #   pool: ztest
+  #  state: ONLINE
+  # status: Some supported features are not enabled on the pool. The pool can
+  #         still be used, but some features are unavailable.
+  # action: Enable all features using 'zpool upgrade'. Once this is done,
+  #         the pool may no longer be accessible by software that does not support
+  #         the features. See zpool-features(5) for details.
+  #   scan: scrub repaired 0B in 0h0m with 0 errors on Sun Aug 11 00:25:01 2019
+  # config:
+
+  #         NAME                                                STATE     READ WRITE CKSUM
+  #         ztest                                               ONLINE       0     0     0
+  #           raidz1-0                                          ONLINE       0     0     0
+  #             ata-WDC_WD30EZRX-00MMMB0_WD-WMAWZ0264083-part4  ONLINE       0     0     0
+  #             ata-WDC_WD30EZRX-00MMMB0_WD-WMAWZ0265314-part4  ONLINE       0     0     0
+  #             ata-ST3000DM001-1ER166_W7P00DKS-part4           ONLINE       0     0     0
+
+  # errors: No known data errors
+
+root@usrv:~# zfs list
+  NAME                          USED  AVAIL  REFER  MOUNTPOINT
+  zfs                          1,59T   173G   128K  /
+  zfs/srv6tbr_1p               1,59T   173G  1,59T  /mnt/zfs
+  zfs/srv6tbr_1p/docker_hub     128K   100G   128K  /mnt/zfs_docker_hub
+  zfs2                         1,69T  68,4G   128K  /
+  zfs2/srv6tbr_2p              1,69T  68,4G  1,68T  /mnt/zfs2
+  zfs2/srv6tbr_2p/zfs05tb_kvm  8,89G  68,4G  8,89G  /mnt/zfs05tb_kvm
+  zfs3                         1,52T   240G   128K  /
+  zfs3/srv6tbr_3p              1,52T   240G  1,45T  /mnt/zfs3
+  zfs3/srv6tbr_3p/videocams    70,0G  30,0G  70,0G  /mnt/zfs3_videocams
+  ztest                        1,74M   979M   128K  /
+  ztest/ztest1                  139K   979M   139K  /mnt/ztest
+root@usrv:~# ls -ali /mnt
+  total 75
+  1572865 drwxr-xr-x  9 root  root 4096 вер 10 19:59 .
+        2 drwxr-xr-x 20 root  root 4096 вер  8 22:50 ..
+        4 drwxrwsr-x 13 ansrv 1002   15 чер 30 01:46 zfs
+      34 drwxr-xr-x  3 root  root    9 лип 25  2018 zfs05tb_kvm
+        4 drwxrwsr-x 15 ansrv 1002   17 чер 11 13:42 zfs2
+        4 drwxrwsr-x 12 ansrv 1002   14 чер 30 01:51 zfs3
+        4 drwxr-xr-x  3 root  root    3 бер 25  2018 zfs3_videocams
+      34 drwxr-xr-x  2 root  root    2 тра 10  2018 zfs_docker_hub
+        4 drwxr-xr-x  3 root  root    3 кві  7  2018 ztest
+
+root@usrv:~# zpool get all 
+  NAME   PROPERTY                       VALUE                          SOURCE
+  zfs    size                           2,72T                          -
+  zfs    capacity                       87%                            -
+  zfs    altroot                        -                              default
+  zfs    health                         ONLINE                         -
+  zfs    guid                           7548361400771547506            -
+  zfs    version                        -                              default
+  zfs    bootfs                         -                              default
+  zfs    delegation                     on                             default
+  zfs    autoreplace                    off                            default
+  zfs    cachefile                      -                              default
+  zfs    failmode                       wait                           default
+  zfs    listsnapshots                  off                            default
+  zfs    autoexpand                     off                            default
+  zfs    dedupditto                     0                              default
+  zfs    dedupratio                     1.00x                          -
+  zfs    free                           346G                           -
+  zfs    allocated                      2,38T                          -
+  zfs    readonly                       off                            -
+  zfs    ashift                         12                             local
+  zfs    comment                        -                              default
+  zfs    expandsize                     -                              -
+  zfs    freeing                        0                              -
+  zfs    fragmentation                  42%                            -
+  zfs    leaked                         0                              -
+  zfs    multihost                      off                            default
+  zfs    feature@async_destroy          enabled                        local
+  zfs    feature@empty_bpobj            active                         local
+  zfs    feature@lz4_compress           active                         local
+  zfs    feature@multi_vdev_crash_dump  disabled                       local
+  zfs    feature@spacemap_histogram     active                         local
+  zfs    feature@enabled_txg            active                         local
+  zfs    feature@hole_birth             active                         local
+  zfs    feature@extensible_dataset     enabled                        local
+  zfs    feature@embedded_data          active                         local
+  zfs    feature@bookmarks              enabled                        local
+  zfs    feature@filesystem_limits      enabled                        local
+  zfs    feature@large_blocks           enabled                        local
+  zfs    feature@large_dnode            disabled                       local
+  zfs    feature@sha512                 disabled                       local
+  zfs    feature@skein                  disabled                       local
+  zfs    feature@edonr                  disabled                       local
+  zfs    feature@userobj_accounting     disabled                       local
+  zfs2   size                           2,72T                          -
+  zfs2   capacity                       93%                            -
+  zfs2   altroot                        -                              default
+  zfs2   health                         ONLINE                         -
+  zfs2   guid                           5512386607637334901            -
+  zfs2   version                        -                              default
+  zfs2   bootfs                         -                              default
+  zfs2   delegation                     on                             default
+  zfs2   autoreplace                    off                            default
+  zfs2   cachefile                      -                              default
+  zfs2   failmode                       wait                           default
+  zfs2   listsnapshots                  off                            default
+  zfs2   autoexpand                     off                            default
+  zfs2   dedupditto                     0                              default
+  zfs2   dedupratio                     1.00x                          -
+  zfs2   free                           190G                           -
+  zfs2   allocated                      2,53T                          -
+  zfs2   readonly                       off                            -
+  zfs2   ashift                         12                             local
+  zfs2   comment                        -                              default
+  zfs2   expandsize                     -                              -
+  zfs2   freeing                        0                              -
+  zfs2   fragmentation                  22%                            -
+  zfs2   leaked                         0                              -
+  zfs2   multihost                      off                            default
+  zfs2   feature@async_destroy          enabled                        local
+  zfs2   feature@empty_bpobj            active                         local
+  zfs2   feature@lz4_compress           active                         local
+  zfs2   feature@multi_vdev_crash_dump  disabled                       local
+  zfs2   feature@spacemap_histogram     active                         local
+  zfs2   feature@enabled_txg            active                         local
+  zfs2   feature@hole_birth             active                         local
+  zfs2   feature@extensible_dataset     enabled                        local
+  zfs2   feature@embedded_data          active                         local
+  zfs2   feature@bookmarks              enabled                        local
+  zfs2   feature@filesystem_limits      enabled                        local
+  zfs2   feature@large_blocks           enabled                        local
+  zfs2   feature@large_dnode            disabled                       local
+  zfs2   feature@sha512                 disabled                       local
+  zfs2   feature@skein                  disabled                       local
+  zfs2   feature@edonr                  disabled                       local
+  zfs2   feature@userobj_accounting     disabled                       local
+  zfs3   size                           2,72T                          -
+  zfs3   capacity                       83%                            -
+  zfs3   altroot                        -                              default
+  zfs3   health                         ONLINE                         -
+  zfs3   guid                           12477324957056169172           -
+  zfs3   version                        -                              default
+  zfs3   bootfs                         -                              default
+  zfs3   delegation                     on                             default
+  zfs3   autoreplace                    off                            default
+  zfs3   cachefile                      -                              default
+  zfs3   failmode                       wait                           default
+  zfs3   listsnapshots                  off                            default
+  zfs3   autoexpand                     off                            default
+  zfs3   dedupditto                     0                              default
+  zfs3   dedupratio                     1.00x                          -
+  zfs3   free                           447G                           -
+  zfs3   allocated                      2,28T                          -
+  zfs3   readonly                       off                            -
+  zfs3   ashift                         12                             local
+  zfs3   comment                        -                              default
+  zfs3   expandsize                     -                              -
+  zfs3   freeing                        0                              -
+  zfs3   fragmentation                  34%                            -
+  zfs3   leaked                         0                              -
+  zfs3   multihost                      off                            default
+  zfs3   feature@async_destroy          enabled                        local
+  zfs3   feature@empty_bpobj            active                         local
+  zfs3   feature@lz4_compress           active                         local
+  zfs3   feature@multi_vdev_crash_dump  disabled                       local
+  zfs3   feature@spacemap_histogram     active                         local
+  zfs3   feature@enabled_txg            active                         local
+  zfs3   feature@hole_birth             active                         local
+  zfs3   feature@extensible_dataset     enabled                        local
+  zfs3   feature@embedded_data          active                         local
+  zfs3   feature@bookmarks              enabled                        local
+  zfs3   feature@filesystem_limits      enabled                        local
+  zfs3   feature@large_blocks           enabled                        local
+  zfs3   feature@large_dnode            disabled                       local
+  zfs3   feature@sha512                 disabled                       local
+  zfs3   feature@skein                  disabled                       local
+  zfs3   feature@edonr                  disabled                       local
+  zfs3   feature@userobj_accounting     disabled                       local
+  ztest  size                           1,62G                          -
+  ztest  capacity                       0%                             -
+  ztest  altroot                        -                              default
+  ztest  health                         ONLINE                         -
+  ztest  guid                           1328183272742204639            -
+  ztest  version                        -                              default
+  ztest  bootfs                         -                              default
+  ztest  delegation                     on                             default
+  ztest  autoreplace                    off                            default
+  ztest  cachefile                      -                              default
+  ztest  failmode                       wait                           default
+  ztest  listsnapshots                  off                            default
+  ztest  autoexpand                     off                            default
+  ztest  dedupditto                     0                              default
+  ztest  dedupratio                     1.00x                          -
+  ztest  free                           1,62G                          -
+  ztest  allocated                      2,97M                          -
+  ztest  readonly                       off                            -
+  ztest  ashift                         12                             local
+  ztest  comment                        -                              default
+  ztest  expandsize                     -                              -
+  ztest  freeing                        0                              -
+  ztest  fragmentation                  5%                             -
+  ztest  leaked                         0                              -
+  ztest  multihost                      off                            default
+  ztest  feature@async_destroy          enabled                        local
+  ztest  feature@empty_bpobj            active                         local
+  ztest  feature@lz4_compress           active                         local
+  ztest  feature@multi_vdev_crash_dump  disabled                       local
+  ztest  feature@spacemap_histogram     active                         local
+  ztest  feature@enabled_txg            active                         local
+  ztest  feature@hole_birth             active                         local
+  ztest  feature@extensible_dataset     enabled                        local
+  ztest  feature@embedded_data          active                         local
+  ztest  feature@bookmarks              enabled                        local
+  ztest  feature@filesystem_limits      enabled                        local
+  ztest  feature@large_blocks           enabled                        local
+  ztest  feature@large_dnode            disabled                       local
+  ztest  feature@sha512                 disabled                       local
+  ztest  feature@skein                  disabled                       local
+  ztest  feature@edonr                  disabled                       local
+  ztest  feature@userobj_accounting     disabled                       local
+
+
+http://gooool.org/online/80259-ukraina-nigeriya-smotret-onlayn-10092019.html
+
+
+root@usrv:~# zfs share -a
+root@usrv:~# zfs get sharesmb
+NAME                         PROPERTY  VALUE     SOURCE
+zfs                          sharesmb  off       default
+zfs/srv6tbr_1p               sharesmb  off       default
+zfs/srv6tbr_1p/docker_hub    sharesmb  off       default
+zfs2                         sharesmb  off       default
+zfs2/srv6tbr_2p              sharesmb  off       default
+zfs2/srv6tbr_2p/zfs05tb_kvm  sharesmb  off       default
+zfs3                         sharesmb  off       default
+zfs3/srv6tbr_3p              sharesmb  off       default
+zfs3/srv6tbr_3p/videocams    sharesmb  off       local
+ztest                        sharesmb  off       default
+ztest/ztest1                 sharesmb  off       local
+root@usrv:~# zfs get sharenfs
+NAME                         PROPERTY  VALUE     SOURCE
+zfs                          sharenfs  off       default
+zfs/srv6tbr_1p               sharenfs  on        local
+zfs/srv6tbr_1p/docker_hub    sharenfs  on        inherited from zfs/srv6tbr_1p
+zfs2                         sharenfs  off       default
+zfs2/srv6tbr_2p              sharenfs  on        local
+zfs2/srv6tbr_2p/zfs05tb_kvm  sharenfs  on        inherited from zfs2/srv6tbr_2p
+zfs3                         sharenfs  off       default
+zfs3/srv6tbr_3p              sharenfs  on        local
+zfs3/srv6tbr_3p/videocams    sharenfs  on        inherited from zfs3/srv6tbr_3p
+ztest                        sharenfs  off       default
+ztest/ztest1                 sharenfs  off       default
+
+
+To automatically import the zpools, change the value from 1 to 0:
+File: /etc/init/zpool-import.conf
+modprobe zfs zfs_autoimport_disable=0
+To automatically mount the zfs mounts, add the following line:
+File: /etc/rc.local
+zfs mount -a
+
+systemctl restart zfs-share
+
+- debug:
+    msg: '{{ item }}'
+  with_items: '{{ ansible_zfs_datasets }}'   
+
+    "msg": {
+        "aclinherit": "restricted",
+        "acltype": "off",
+        "atime": "off",
+        "available": "979M",
+        "canmount": "on",
+        "casesensitivity": "sensitive",
+        "checksum": "on",
+        "compression": "lz4",
+        "compressratio": "1.00x",
+        "context": "none",
+        "copies": "1",
+        "createtxg": "60",
+        "creation": "сб бер 24 19:43 2018",
+        "dedup": "off",
+        "defcontext": "none",
+        "devices": "on",
+        "dnodesize": "legacy",
+        "exec": "on",
+        "filesystem_count": "none",
+        "filesystem_limit": "none",
+        "fscontext": "none",
+        "guid": "9806509725863176456",
+        "logbias": "latency",
+        "logicalreferenced": "44K",
+        "logicalused": "44K",
+        "mlslabel": "none",
+        "mounted": "yes",
+        "mountpoint": "/mnt/ztest",
+        "name": "ztest/ztest1",
+        "nbmand": "off",
+        "normalization": "formD",
+        "overlay": "off",
+        "primarycache": "all",
+        "quota": "none",
+        "readonly": "off",
+        "recordsize": "128K",
+        "redundant_metadata": "all",
+        "refcompressratio": "1.00x",
+        "referenced": "139K",
+        "refquota": "none",
+        "refreservation": "none",
+        "relatime": "off",
+        "reservation": "none",
+        "rootcontext": "none",
+        "secondarycache": "all",
+        "setuid": "on",
+        "sharenfs": "off",
+        "sharesmb": "off",
+        "snapdev": "hidden",
+        "snapdir": "hidden",
+        "snapshot_count": "none",
+        "snapshot_limit": "none",
+        "sync": "standard",
+        "type": "filesystem",
+        "used": "139K",
+        "usedbychildren": "0B",
+        "usedbydataset": "139K",
+        "usedbyrefreservation": "0B",
+        "usedbysnapshots": "0B",
+        "utf8only": "on",
+        "version": "5",
+        "volmode": "default",
+        "vscan": "off",
+        "written": "139K",
+        "xattr": "on",
+        "zoned": "off"
+    }
+}
+
+ZFS SAMBA Troubleshooting
+https://blog.ls-al.com/zfs-on-linux-smb-sharing/
+apt install samba
+
+# tail -10 /etc/samba/smb.conf 
+[DATA]
+path = /DATA
+public = yes
+writable = yes
+create mask = 0775
+directory mask = 0775
+ 
+# systemctl restart smbd
+# net usershare list
+ 
+# testparm 
+{..}
+[DATA]
+   create mask = 0775
+   directory mask = 0775
+   guest ok = Yes
+   path = /DATA
+   read only = No
+
+Note some commands and locations for troubleshooting.
+# smbstatus 
+# testparm
+# cat /etc/dfs/sharetab 
+# net usershare list
+# ls /var/lib/samba/usershares/
+# cat /var/lib/samba/usershares/data 
+# pdbedit -L
+

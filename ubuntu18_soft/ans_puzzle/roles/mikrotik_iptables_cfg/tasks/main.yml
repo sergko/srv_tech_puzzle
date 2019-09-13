@@ -1,0 +1,26 @@
+---
+# tasks file for mikrotik_iptables_cfg
+# 665805ddf9f7.sn.mynetname.net   
+# /ip firewall nat
+# add action=masquerade chain=srcnat comment="default configuration" out-interface=pppoe-out_Volya15 \
+#     src-address=10.2.0.0/16
+# add action=masquerade chain=srcnat comment="masq. vpn traffic" src-address=192.168.89.0/24
+# add action=dst-nat chain=dstnat comment="port forward dts part 880->8080 jenkins" disabled=yes \
+#     dst-address=93.78.32.11 dst-port=880 protocol=tcp to-addresses=10.2.82.105 to-ports=8080
+# add action=dst-nat chain=dstnat comment="port forward dts part 2222-> 22 jenkins" disabled=yes \
+#     dst-address=93.78.32.11 dst-port=2222 protocol=tcp to-addresses=10.2.82.105 to-ports=22
+# add action=src-nat chain=srcnat comment="port forward src part 8080->880 jenkins" disabled=yes protocol=\
+#     tcp src-address=10.2.82.105 src-port=880 to-addresses=10.2.83.11 to-ports=8080
+# add action=src-nat chain=srcnat comment="port forward src part 22->2222 jenkins" disabled=yes protocol=\
+#     tcp src-address=10.2.82.105 src-port=22 to-addresses=10.2.83.11 to-ports=2222
+# add action=log chain=dstnat disabled=yes dst-address=93.78.32.11 dst-port=8080 protocol=tcp to-addresses=\
+#     10.2.82.105 to-ports=8080
+# add action=netmap chain=srcnat disabled=yes dst-address=93.75.151.173 dst-port=8888 protocol=tcp \
+#     to-addresses=10.2.82.105
+
+#Tested!
+#Need replace WAN dynapic IP after reboot etc 
+add action=dst-nat chain=dstnat comment="port forward dts part 2222-> 22 usrv" disabled=yes \
+    dst-address=93.75.137.180  dst-port=2222 protocol=tcp to-addresses=10.2.83.208 to-ports=22
+add action=src-nat chain=srcnat comment="port forward src part 22->2222 usrv" disabled=yes protocol=\
+    tcp src-address=10.2.83.208 src-port=22 to-addresses=93.75.137.180 to-ports=2222

@@ -3,8 +3,26 @@ ans_prep:
 	@apt install -y python3.7
 useradd:
 	@useradd -m -d /home/ansrv -s /bin/bash -c "Ansible Service user" -G adm,su,sudo ansrv
+	# @useradd -m -d /home/smbu -s /bin/bash -c "SMBUser Service user" smbu
+	@useradd -M -s /sbin/nologin -c "SMBUser Service user" smbu # -M - no home, -s - no shell, to prevent login to ssh etc
+	@groupadd smbg
+	@usermod -G smbg smbu
+	@sudo smbpasswd -a smbu #IMPORTANT!!!! but this manuall enter of pass.....
+
 passwd:
 	@passwd ansvr #V@6
+	@passwd smbu 1		
+
+# Config new user + samb user + permissions
+# useradd -M -s /sbin/nologin smbu # -M - no home, -s - no shell, to prevent login to ssh etc se
+# passwd smbu
+# groupadd smbg
+# usermod -G smbg smbu
+
+# ######IMPORTANT#############
+# smbpasswd -a smbu #add samba user + passwrd
+# smbpasswd -e smbu # enable / -d disable
+
 sudoers:
 	#/etc/sudoers.d/ansrv   [----]  1 L:[  1+ 1   2/  2] *(22  /  51b) 0097 0x061                            [*][X]
 	@echo %ansrv ALL=(ALL) NOPASSWD: ALL >> /etc/sudoers.d/ansrv
@@ -83,3 +101,12 @@ ans_soft:
 	# ansible_ssh_user=ansrv ansible_ssh_password=Vol@nd666
 	#--ask-sudo-pass -v #vvvv
 
+# zfs:
+# 	TAGS=all ;\
+# 	echo TAGS=$(TAGS) ;\
+# 	SKIP_TAGS="" ;\
+# 	echo SKIP_TAGS=$(SKIP_TAGS) ;\
+# 	echo "ansible-playbook zfs.yaml -vvv -i hosts.ini --tags $(TAGS)  --skip-tags $(SKIP_TAGS)" ;\
+# 	ansible-playbook zfs.yaml -vv -i hosts.ini #--tags $(TAGS)  --skip-tags $(SKIP_TAGS)  #\
+# 	# ansible_ssh_user=ansrv ansible_ssh_password=Vol@nd666
+# 	#--ask-sudo-pass -v #vvvv

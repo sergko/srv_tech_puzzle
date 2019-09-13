@@ -1,0 +1,20 @@
+---
+# tasks file for prn_install_cfg
+
+- name: install config soft from off repos
+  become: yes
+  block:
+    - name: "apt cache update"
+      apt: "update_cache=True"
+      # become: yes
+      failed_when: False
+
+    - name: "apt soft install common"
+      apt: "name={{ item }} state={{ apt_state }}"
+      become: yes
+      with_items:
+        - system-config-printer
+        - system-config-printer-common
+        - system-config-printer-udev
+      # when:  apt_soft_common is defined and  apt_soft_common | default (true) 
+  

@@ -1,0 +1,17 @@
+---
+# handlers file for zfs_install_cfg
+
+# handlers file for ansible-samba
+# - name: restart zfs-share
+#   service:
+#     name: zfs-share
+#     state: restarted
+#   become: true
+
+# - name: restart service zfs-share, in all cases, also issue daemon-reload to pick up config changes
+- name: restart zfs-share
+  become: true
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: zfs-share

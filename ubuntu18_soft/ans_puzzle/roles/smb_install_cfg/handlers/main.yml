@@ -1,0 +1,22 @@
+---
+# handlers file for smb_install_cfg
+
+# handlers file for ansible-samba
+#check zfs handler with systemd
+- name: restart nmbd
+  service:
+    name: nmbd
+    state: restarted
+  become: true
+
+# - name: restart samba-ad-dc
+#   service:
+#     name: samba-ad-dc
+#     state: restarted
+#   become: true
+
+- name: restart smbd
+  service:
+    name: smbd
+    state: restarted
+  become: true

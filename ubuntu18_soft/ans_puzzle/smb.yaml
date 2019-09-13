@@ -1,14 +1,11 @@
 ---
-- name: install soft
+- name: ZFS install + cfg 
   hosts: all # or spec group or host only
   become: yes
   roles:
-    # - { role: usrv_prep_soft } 
-    # - { role: zfs_install_cfg }   
-    # - { role: prn_install_cfg }       
-    - { role: smb_install_cfg } #when: tag=[soft,smb]
+    # - { role: owncloud_install_local, when: ansible_system == 'Linux' }    # только если ОС линух
+    - { role: smb_install_cfg }    # только если ОС линух
 #    - { role: usrv_prep_soft, when: ansible_system == 'Linux' }    # только если ОС линух
 #    - owncloud_install_local # безусловный и безпараметричный запуск роли
-    # - { role: owncloud_install_local, when: ansible_system == 'Linux' }    # только если ОС линух
 # а так с параметрами
 ## tags: install

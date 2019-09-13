@@ -1,0 +1,4 @@
+---
+# defaults file for prn_install_cfg
+
+apt_state: "{{ apt_inst | default ('present') }}" #install

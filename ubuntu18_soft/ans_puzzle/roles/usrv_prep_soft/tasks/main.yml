@@ -1,5 +1,15 @@
 ---
 # tasks file for usrv_prep_soft
+
+# NEED on ANSIBLE MASTER
+# - name: "pip soft install for ansible"
+#   pip:
+#     name:
+#       - jmespath
+#   #     - django>1.11.0,<1.12.0
+#   #     - bottle>0.10,<0.20,!=0.11
+#   # when: apt_soft_common is defined and  apt_soft_common | default (true) 
+
 - name: install common soft from off repos
   become: yes
   block:
@@ -14,8 +24,8 @@
       with_items:
         - mc
         - yakuake
-      when: "{{ apt_soft_common is defined and  apt_soft_common | default (true) }}"
-  
+      when: apt_soft_common is defined and  apt_soft_common | default (true) 
+
     - name: "apt soft install dev"
       apt: "name={{ item }} state={{apt_state}}"
       become: yes
@@ -31,8 +41,8 @@
         - git-doc
         - gitweb
         - git-man
-        - code #VSCode
-      when: "{{ apt_soft_dev is defined and  apt_soft_dev | default (true) }}"
+        # - code #VSCode
+      when: apt_soft_dev is defined and  apt_soft_dev | default (true)
       # pip install cython pytest numpy
 
     - name: "apt soft install KDE env"
@@ -47,7 +57,7 @@
         # - xfce4
         # - cinnamon 
         # - mate
-      when: "{{ apt_soft_kde is defined and  apt_soft_kde | default (true) }}"
+      when: apt_soft_kde is defined and  apt_soft_kde | default (true)
 
     - name: "apt soft install system tools"
       apt: "name={{ item }} state={{apt_state}}"
@@ -65,15 +75,15 @@
         # - btrfs-progs 
         # - btrfs-tools
         # - reiserfsprogs
+        # - mdadm
         #dumpet xorriso squashfs-tools gddrescue isolinux # CD TOOLS
-      when: "{{ apt_soft_sys is defined and  apt_soft_sys | default (true) }}"
+      when: apt_soft_sys is defined and  apt_soft_sys | default (true)
       
-# Check+fix for Badblocks EXT4
-# Check and fix BADs on physical disk
-# https://wiki.archlinux.org/index.php/badblocks
-# Read-Write distructive test
-# badblocks -wsv /dev/<device> -o <path to output log file with bad sectors>
-
+    # Check+fix for Badblocks EXT4
+    # Check and fix BADs on physical disk
+    # https://wiki.archlinux.org/index.php/badblocks
+    # Read-Write distructive test
+    # badblocks -wsv /dev/<device> -o <path to output log file with bad sectors>
 
     - name: "apt soft install system services"
       apt: "name={{ item }} state={{apt_state}}"
@@ -89,7 +99,7 @@
         # - wine
         # - qt4wine
         # - etcher #- usb flash writer/backuper ( e.g. for memtest86)
-      when: "{{ apt_soft_srv is defined and  apt_soft_srv | default (true) }}"
+      when: apt_soft_srv is defined and  apt_soft_srv | default (true)
 
     - name: "apt soft install GUI tools"
       apt: "name={{ item }} state={{apt_state}}"
@@ -100,14 +110,16 @@
         - caja
         - caja-eiciel
         - firefox
-        - google-chrome-stable
+        # - google-chrome-stable
         - vlc
-        - code #VSCode
+        # - code #VSCode
         - krdc
+        - synaptic
+        - baobab
         # - skype
         # - telegram
         # - slack        
-      when: "{{ apt_soft_gui is defined and  apt_soft_gui | default (true) }}"
+      when: apt_soft_gui is defined and  apt_soft_gui | default (true)
 
     - name: "apt soft install Network tools"
       apt: "name={{ item }} state={{apt_state}}"
@@ -119,7 +131,7 @@
         - ethtool    
         - links        # console browser!!!!
         - ntp 
-        - ntdate
+        # - ntdate
         - net-tools
         # - bridge-utils
         # - vnc
@@ -129,7 +141,8 @@
         # - curl4         # LATEST as curl unsuitable) FOR VIBER
         # - libcurl4      # LATEST       
 
-      when: "{{ apt_soft_net is defined and  apt_soft_net | default (true) }}"
+      when: apt_soft_net is defined and  apt_soft_net | default (true)
+  when: apt_skip_tmp
 
 # curl3 with libcurl3 for viber (curl4 as curl unsuitable
 # etcher - usb flash writer/backuper ( e.g. for memtest86)
@@ -176,39 +189,11 @@
   # #    - wine
 #/
 
-- name: install common soft from 3rd party repos
-  become: yes
-  block:
-    - name: "apt cache update"
-      apt: "update_cache=True"
-      # become: yes
-      failed_when: False
+#-------------------------------------------------------------
+#-------------------------------------------------------------
+#-------------------------------------------------------------
+#-------------------------------------------------------------
 
-    - name: "apt soft install common"
-      apt: "name={{ item }} state={{apt_state}}"
-      become: yes
-      with_items:
-        - mc
-        - yakuake
-      when: "{{ apt_soft_common is defined and  apt_soft_common | default (true) }}"
-  
-    - name: "apt soft install dev"
-      apt: "name={{ item }} state={{apt_state}}"
-      become: yes
-      with_items:
-        - python-setuptools
-        - python-pip
-        - python3.7
-        - python3-pip
-        - ipython
-        - python-xattr
-        - git
-        - git-gui
-        - git-doc
-        - gitweb
-        - git-man
-      when: "{{ apt_soft_dev is defined and  apt_soft_dev | default (true) }}"
-# git gui # to start GUI
 
 # ADDDDD
   #----
@@ -258,6 +243,8 @@
   #automounter
   # https://www.evernote.com/Home.action?_sourcePage=2kw7epqUQELiMUD9T65RG_YvRLZ-1eYO3fqfqRu0fynRL_1nukNa4gH1t86pc1SP&__fp=ppUEsDiCwYg3yWPvuidLz-TPR6I9Jhx8&hpts=1568104729078&showSwitchService=true&usernameImmutable=false&rememberMe=true&login=&login=Sign+in&login=true&hptsh=6FHLszDvkW%2BtJF9cyXnDYp4cEXo%3D#n=24b3a19a-2803-4cec-9194-ec36ac36b0cd&s=s622&ses=4&sh=2&sds=5&
   #----
+  #code = MS VSCode
+  # google-chrome-stable
   #MSTeams
   #Jetbrains PyCharm etc
   #Gitcracken
@@ -280,3 +267,155 @@
   # veeam
   # Video camera
   # + cloude
+
+
+- name: config 3rd party repos
+  become: yes
+  block:
+    #----------------------------------
+    #MS VS Code
+    #----------------------------------
+    # https://linuxize.com/post/how-to-install-visual-studio-code-on-ubuntu-18-04/
+    # wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | sudo apt-key add -
+    # sudo add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main"
+    # sudo apt update
+    # sudo apt install code
+
+    # always try to use HTTPS. I'm not sure why the nginx folks don't provide it.
+    - name: add MS VS Code apt-key
+      apt_key: 
+        url: https://packages.microsoft.com/keys/microsoft.asc
+        state: present 
+
+    #replaced by command below
+    # - name: add MS VS Code apt repository
+    #   become: yes
+    #   apt_repository: 
+    #     # repo: 'deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main' 
+    #     # repo: deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main 
+    #     repo: deb https://packages.microsoft.com/repos/vscode stable main 
+    #     state: present 
+    #     # filename: msvscode 
+    #     # update_cache: yes
+
+    - name: add MS VS Code add-apt-repository
+      become: yes
+      command: add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main"
+    # sudo add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main"
+
+    # - name: install nginx
+    #   apt: 
+    #     name: code
+    #     state: present
+    #     update_cache: yes
+
+
+    #----------------------------------
+    # TEAMVIEWER
+    #----------------------------------
+    # https://vitux.com/how-to-install-teamviewer-on-ubuntu/
+    # cd /tmp && wget https://download.teamviewer.com/download/linux/signature/TeamViewer2017.asc
+    # sudo apt-key add TeamViewer2017.asc
+    # sudo sh -c 'echo "deb http://linux.teamviewer.com/deb stable main" >> /etc/apt/sources.list.d/teamviewer.list'
+    # #sudo sh -c 'echo "deb http://linux.teamviewer.com/deb preview main" >> /etc/apt/sources.list.d/teamviewer.list'
+    # sudo apt update
+    # sudo apt install teamviewer
+
+    # always try to use HTTPS. I'm not sure why the nginx folks don't provide it.
+    - name: add TEAMVIEWER apt-key
+      apt_key: 
+        url: https://download.teamviewer.com/download/linux/signature/TeamViewer2017.asc
+        state: present 
+
+    #replaced by command below
+    # - name: add TEAMVIEWER add-apt-repository
+    #   become: yes
+    #   apt_repository: 
+    #     # repo: 'deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main' 
+    #     # repo: deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main 
+    #     repo: deb http://linux.teamviewer.com/deb stable main
+    #     state: present 
+    #     filename: /etc/apt/sources.list.d/teamviewer.list 
+    #     update_cache: yes
+    #   ignore_errors: yes
+    #   register: result_add_apt_rep
+
+    # - debug:
+    #     var: result_add_apt_rep  
+
+    - name: add TEAMVIEWER add-apt-repository
+      become: yes
+      command: add-apt-repository "deb http://linux.teamviewer.com/deb stable main"
+    # sudo add-apt-repository "deb http://linux.teamviewer.com/deb stable main"
+      # when: result_add_apt_rep.rc != 0
+      register: result_add_apt_rep_cmd
+
+    - debug:
+        var: result_add_apt_rep_cmd
+
+  when: apt_skip_tmp
+
+
+# wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+# Now you can use dpkg to install Chrome from the downloaded DEB file:
+# sudo dpkg -i google-chrome-stable_current_amd64.deb
+# OR
+# Add Key:
+# wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+# Set repository:
+# echo 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main' | sudo tee /etc/apt/sources.list.d/google-chrome.list
+# Install package:
+# sudo apt-get update 
+# sudo apt-get install google-chrome-stable
+
+# always try to use HTTPS. I'm not sure why the nginx folks don't provide it.
+- name: add google-chrome-stable apt-key
+  apt_key: 
+    url: https://dl-ssl.google.com/linux/linux_signing_key.pub
+    state: present 
+
+#replaced by command below
+# - name: add TEAMVIEWER add-apt-repository
+#   become: yes
+#   apt_repository: 
+#     # repo: 'deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main' 
+#     # repo: deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main 
+#     repo: deb http://linux.teamviewer.com/deb stable main
+#     state: present 
+#     filename: /etc/apt/sources.list.d/teamviewer.list 
+#     update_cache: yes
+#   ignore_errors: yes
+#   register: result_add_apt_rep
+
+# - debug:
+#     var: result_add_apt_rep  
+
+- name: add google-chrome-stable add-apt-repository
+  become: yes
+  command: add-apt-repository "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
+# sudo add-apt-repository "deb http://linux.teamviewer.com/deb stable main"
+  # when: result_add_apt_rep.rc != 0
+  register: result_add_apt_rep_cmd
+
+- debug:
+    var: result_add_apt_rep_cmd
+
+
+# INSTALL 3rd party soft
+
+- name: install common soft from 3rd party repos
+  become: yes
+  block:
+    - name: "apt cache update"
+      apt: "update_cache=True"
+      # become: yes
+      failed_when: False
+
+    - name: "apt soft install common"
+      apt: "name={{ item }} state={{apt_state}}"
+      become: yes
+      with_items:
+        - code
+        - teamviewer
+        - google-chrome-stable
+      when:  apt_soft_3rd is defined and  apt_soft_3rd | default (true) 

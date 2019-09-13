@@ -1,0 +1,200 @@
+---
+# tasks file for smb_install_cfg
+#example https://github.com/mrlesmithjr/ansible-samba
+
+
+# NEED on ANSIBLE MASTER
+# sudo pip install jmespath
+# sudo pip3 install jmespath
+
+# - name: "pip soft install for ansible"
+#   pip:
+#     name:
+#       - jmespath
+#   #     - django>1.11.0,<1.12.0
+#   #     - bottle>0.10,<0.20,!=0.11
+#   # when: apt_soft_common is defined and  apt_soft_common | default (true) 
+
+- name: SMB install 
+  become: yes
+  block:
+    - name: "apt cache update"
+      apt: "update_cache=True"
+      # become: yes
+      failed_when: False
+
+    - name: "apt soft install SMB components"
+      apt: "name={{ item }} state={{apt_state}}"
+      become: yes
+      with_items:
+        # - nfs-kernel-server
+        # - nfs-common
+        - samba
+        - samba-common
+        - cifs-utils
+        - smbclient        
+      when: "{{ apt_tool_smb is defined and apt_tool_smb | default (false) }}"
+  when: "{{ smb_cfg_skip is defined and smb_cfg_skip | default (false) }}"
+
+
+
+    # no datasets available
+  # useradd -M -s /sbin/nologin smbu # -M - no home, -s - no shell, to prevent login to ssh etc see /etc/passwd
+  # passwd smbu
+  # groupadd smbg
+  # usermod -G smbg smbu
+  # Create a share named home on the server ucs.example.com with the path /home.
+
+
+- name: SMB config
+  become: yes
+  block:
+    - name: config_samba from template
+      become: true
+      template:
+        src: etc/samba/smb.conf.j2
+        dest: /etc/samba/smb.conf
+        owner: root
+        group: root
+        mode: 0644
+      # backup: yes  
+      # notify:
+      #   - restart nmbd
+      #   - restart smbd
+
+    - name: testparm -s -v
+      command:  testparm -s -v
+      register: result_testparm
+      ignore_errors: True
+      changed_when:
+        - '"Loaded services file OK" in result_testparm.stderr'
+        # - result.rc == 0
+    # - debug:
+    #     msg: '{{ result_testparm.stderr }}'
+    # - debug: '{{ result_testparm.stderr }}'
+    - name: Debug
+      debug:
+        var: result_testparm.stderr 
+        # msg: 
+
+    - name: restart smbd+nmbd if configfile is alive/comptible
+      command: echo '---------------Restarting smbd+nmbd--------------------'
+      when: '"Loaded services file OK" in result_testparm.stderr'
+        # when: redis_config.changed
+      notify:
+        - restart nmbd
+        - restart smbd    
+
+  # when: "{{ smb_cfg_skip is defined and smb_cfg_skip | default (false) }}"
+
+    #look to ZFS for example
+- name: populate service facts
+  service_facts:
+
+- debug:
+    var: ansible_facts.services
+# - debug:
+#     var: ansible_facts.services['smb']    
+
+# - debug: msg="{{ addresses | json_query(\"private_man[?type=='fixed'].addr\") }}"
+
+# - debug:
+#     msg: "{{ ansible_facts.services | json_query(\"smb\") }}"
+# "You need to install \"jmespath\" prior to running json_query filter"
+
+# {{ ansible_facts["eth0"]["ipv4"]["address"] }}
+# {{ ansible_facts.eth0.ipv4.address }}
+# - debug:
+#     msg: "{{ ansible_facts['services']['smb'] }}"
+#     # msg: "{{ ansible_facts.services.smb }}"
+# - name: Collect only facts returned by smb+nmb 1
+#   service_facts:
+#   register: services_state
+
+# - debug: var=services_state.ansible_facts.services.smb.state
+# - debug: var=services_state.ansible_facts.services.nmb.service.state
+
+# - name: Gathering service facts
+#   service_facts:
+#   register: services_state
+# - debug: var=services_state.ansible_facts.services["smb"].state
+# - debug: var=services_state.ansible_facts.services["smb"]
+# - debug: var=services_state.ansible_facts.services["firewalld.service"].state
+
+# - name: Collect only facts returned by smb+nmb 2
+#   service_facts:
+#     # ansible_facts:
+#     services:
+#     - 'smb'
+#     - 'nmb'
+#       # - facter
+
+# - name: collect facts about system services
+#   service_facts:
+#   register: services_state
+
+# - name: Debug
+#   debug:
+#     var: services_state
+# - name: Debug
+#   debug:
+#     var: services_state
+# - name: Debug
+#   debug:
+#     var: services_state.ansible_facts.services.smb
+  # with_items: ['smb','smbd.service','nmb','nmbd.service']  #['smb','smbd.service','smb','smbd.service']
+# - name: Debug
+#   debug:
+#     var: "services_state.ansible_facts.services[{{ item }}]"
+#   with_items: ['smb','smbd.service','nmb','nmbd.service']  #['smb','smbd.service','smb','smbd.service']  
+    # var: services_state.ansible_facts.services['smb','smbd.service','smb','smbd.service']    
+# @MaksimLuzik call it like: var: firewall_status.ansible_facts.services['firewalld.service']
+#>@MaksimLuzik call it like: var: services_state.ansible_facts.services['smb','smbd.service','smb','smbd.service'] #samba-ad-dc
+#>@MaksimLuzik call it like: var: services_state.ansible_facts.services['smb'] #,'smbd.service','smb','smbd.service'] #samba-ad-dc
+
+
+
+# - name: Collect only facts returned by services.smb
+#   service_facts:
+#     ansible_facts:
+#       services:
+#       - 'smb'
+      # - '!any'
+      # - facter
+        # "ansible_nodename": "usrv",
+        # "ansible_os_family": "Debian",
+        # "ansible_system": "Linux",
+# root@usrv:~# ls -ali /etc/samba
+# 1576507 -rw-r--r--   1 root root  8942 вер 10 11:28 smb.conf
+
+# TASK [smb_install_cfg : Debug] ********************************************************************************************************************************************************************************************
+# task path: /home/serg/Rep_gitkraken/srv_tech_puzzle/ubuntu18_soft/ans_puzzle/roles/smb_install_cfg/tasks/main.yml:136
+# ok: [10.2.83.208] => {
+#     "services_state": {
+#         "ansible_facts": {
+#             "services": {
+#                 "smbd": {
+#                     "name": "smbd",
+#                     "source": "sysv",
+#                     "state": "running"
+#                 },
+#                 "smbd.service": {
+#                     "name": "smbd.service",
+#                     "source": "systemd",
+#                     "state": "running"
+#                 },
+#                 "samba-ad-dc": {
+#                     "name": "samba-ad-dc",
+#                     "source": "sysv",
+#                     "state": "stopped"
+#                 },
+#                 "nmbd": {
+#                     "name": "nmbd",
+#                     "source": "sysv",
+#                     "state": "running"
+#                 },
+#                 "nmbd.service": {
+#                     "name": "nmbd.service",
+#                     "source": "systemd",
+#                     "state": "running"
+#                 },
