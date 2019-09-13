@@ -5,9 +5,32 @@ useradd:
 	@useradd -m -d /home/ansrv -s /bin/bash -c "Ansible Service user" -G adm,su,sudo ansrv
 	# @useradd -m -d /home/smbu -s /bin/bash -c "SMBUser Service user" smbu
 	@useradd -M -s /sbin/nologin -c "SMBUser Service user" smbu # -M - no home, -s - no shell, to prevent login to ssh etc
+	@passwd smbu # =1
 	@groupadd smbg
 	@usermod -G smbg smbu
 	@sudo smbpasswd -a smbu #IMPORTANT!!!! but this manuall enter of pass.....
+# root@usrv:~# testparm -v | grep passwd
+# Load smb config files from /etc/samba/smb.conf
+# Loaded services file OK.
+# Server role: ROLE_STANDALONE
+#-----
+#        smb passwd file = /etc/samba/smbpasswd	
+# root@usrv:~# cat /etc/passwd | grep smbu
+# smbu:x:1002:1002:SMBUser Service user:/home/smbu:/bin/bash
+# root@usrv:~# cat /etc/shadow | grep smbu
+# smbu:$6$i8wIV7sJCuAH0eU9$SkUmaB3Mve1v8UQPcEAhId3jVGcHT646HG7nOs03Y7tm8w2AmBSVccqj7S2RqGy8ElifVt11OYYHWCb6f/Ah7.:18150:0:99999:7:::
+	@useradd -m -d /home/nata -s /bin/bash  -c "Natali user" nata 
+	@passwd nata #  !QAZ2wsx
+	@usermod -G smbg nata
+	@sudo smbpasswd -a nata #IMPORTANT!!!! but this manuall enter of pass.....
+# root@usrv:~# cat /etc/passwd | grep nata
+# nata:x:1003:1004:Natali user:/home/nata:/bin/bash
+# root@usrv:~# cat /etc/shadow | grep nata
+# nata:$6$.UckOuRS2.93p9Uu$MfDMwWhcUNvnuvo3JJ7dS5BGRTusKP/xSRQJ8CrYG2NoidjvCN73k81qk.2E9oI9cbSi4Kpjmwm8TAO/9PJ741:18152:0:99999:7:::
+	@useradd -m -d /home/kids -s /bin/bash  -c "Kids user" kids 
+	@passwd kids #  12345678
+	@usermod -G smbg kids
+	@sudo smbpasswd -a kids #IMPORTANT!!!! but this manuall enter of pass.....
 
 passwd:
 	@passwd ansvr #V@6

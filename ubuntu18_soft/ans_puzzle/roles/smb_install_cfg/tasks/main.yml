@@ -32,7 +32,8 @@
         - samba
         - samba-common
         - cifs-utils
-        - smbclient        
+        - smbclient   
+        - system-config-samba     
       when: "{{ apt_tool_smb is defined and apt_tool_smb | default (false) }}"
   when: "{{ smb_cfg_skip is defined and smb_cfg_skip | default (false) }}"
 

@@ -89,6 +89,21 @@
         create mode = 0660
         directory mode = 0770
 
+#ZFS
+
+#Shared RW for ZEON.LAN and user nata=!Z2x
+[nata
+        comment = access for smbu rw
+        path = /mnt/zfs/nata
+#       read only = yes
+#       writeable = no
+        read only = no
+        writeable = yes
+        guest ok = no
+        valid users = @nata
+        create mode = 0660
+        directory mode = 0770
+                                  
 #Shared RO for ZEON.LAN and user smbu%1
 
 [Soft]
