@@ -4,7 +4,7 @@ apt_state: "{{ apt_inst | default ('present') }}" #install
 # apt_state: "{{ apt_inst | default ('absent')}" #remove
 # "value of state must be one of: absent, build-dep, installed, latest, present, removed, present, got: true"
 
-apt_skip_tmp: false
+apt_skip_tmp: true
 
 apt_soft_common: true
 apt_soft_dev: true

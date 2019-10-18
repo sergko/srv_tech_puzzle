@@ -285,7 +285,8 @@
     - name: add MS VS Code apt-key
       apt_key: 
         url: https://packages.microsoft.com/keys/microsoft.asc
-        state: present 
+        state: present
+      when: linux_old is defined and linux_old
 
     #replaced by command below
     # - name: add MS VS Code apt repository
@@ -301,6 +302,7 @@
     - name: add MS VS Code add-apt-repository
       become: yes
       command: add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main"
+      when: linux_old is defined and linux_old
     # sudo add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main"
 
     # - name: install nginx
@@ -353,7 +355,7 @@
     - debug:
         var: result_add_apt_rep_cmd
 
-  when: apt_skip_tmp
+  when: apt_skip_tmp #== 'false'
 
 
 # wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
@@ -403,19 +405,19 @@
 
 # INSTALL 3rd party soft
 
-- name: install common soft from 3rd party repos
-  become: yes
-  block:
-    - name: "apt cache update"
-      apt: "update_cache=True"
-      # become: yes
-      failed_when: False
+# - name: install common soft from 3rd party repos
+#   become: yes
+#   block:
+#     - name: "apt cache update"
+#       apt: "update_cache=True"
+#       # become: yes
+#       failed_when: False
 
-    - name: "apt soft install common"
-      apt: "name={{ item }} state={{apt_state}}"
-      become: yes
-      with_items:
-        - code
-        - teamviewer
-        - google-chrome-stable
-      when:  apt_soft_3rd is defined and  apt_soft_3rd | default (true) 
+#     - name: "apt soft install common"
+#       apt: "name={{ item }} state={{apt_state}}"
+#       become: yes
+#       with_items:
+#         - code
+#         - teamviewer
+#         - google-chrome-stable
+#       when:  apt_soft_3rd is defined and  apt_soft_3rd | default (true)

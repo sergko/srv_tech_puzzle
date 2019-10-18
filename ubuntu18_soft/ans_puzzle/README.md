@@ -1,6 +1,14 @@
 # owncloudXauto
 automation owncloud setup/coonfig/maintainance
 
+requirements:
+apt install -y git python3-pip ssh
+git clone https://github.com/sergko/srv_tech_puzzle.git
+cd srv_tech_puzzle
+make useradd
+pip3 install ansible==2.8.4
+
+
 set in commandline
 $ ansible localhost -m ping -e 'ansible_python_interpreter=/usr/bin/python3'
 $ ansible-playbook sample-playbook.yml -e 'ansible_python_interpreter=/usr/bin/python3'
