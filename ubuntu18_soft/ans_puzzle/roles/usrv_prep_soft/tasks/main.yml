@@ -18,13 +18,13 @@
       # become: yes
       failed_when: False
 
-    - name: "apt soft install common"
-      apt: "name={{ item }} state={{apt_state}}"
-      become: yes
-      with_items:
-        - mc
-        - yakuake
-      when: apt_soft_common is defined and  apt_soft_common | default (true) 
+    # - name: "apt soft install common"
+    #   apt: "name={{ item }} state={{apt_state}}"
+    #   become: yes
+    #   with_items:
+    #     - mc
+    #     - yakuake
+    #   when: apt_soft_common is defined and  apt_soft_common | default (true) 
 
     - name: "apt soft install dev"
       apt: "name={{ item }} state={{apt_state}}"
@@ -71,6 +71,20 @@
         - atop
         - htop
         - iotop
+        # - nm-connection-editor # wifi network config - not a package!
+        - print-manager
+        - kdenetwork #with a lot dependenciess
+        - plasma-nm
+        - kubuntu-notification-helper
+        - kdeadmin
+        - kdeutils
+        - kdegraphics
+        - kdemultimedia
+        - kde-config-systemd
+        - kde-service-menu-fuseiso
+        - plasma-wallpapers-addons
+        - plasma-widgets-addons
+        # - 
         # - badblocks
         # - btrfs-progs 
         # - btrfs-tools
@@ -91,7 +105,7 @@
       with_items:
         - mysql-client
         - nfs-kernel-server
-        - nfs-common
+        # - nfs-commonplasma-widgets-addons # max ubuntu 18
         - samba
         - samba-common
         - cifs-utils
@@ -355,6 +369,13 @@
     - debug:
         var: result_add_apt_rep_cmd
 
+    - name: "apt soft install Teamviewr"
+      apt: "name={{ item }} state={{apt_state}}"
+      become: yes
+      with_items:
+        - teamviewer      
+      when: apt_soft_gui is defined and  apt_soft_gui | default (true)
+
   when: apt_skip_tmp #== 'false'
 
 
@@ -401,6 +422,14 @@
 
 - debug:
     var: result_add_apt_rep_cmd
+
+
+- name: "apt soft install google-chrome-stable"
+  apt: "name={{ item }} state={{apt_state}}"
+  become: yes
+  with_items:
+    - google-chrome-stable      
+  when: apt_soft_gui is defined and  apt_soft_gui | default (true)
 
 
 # INSTALL 3rd party soft
