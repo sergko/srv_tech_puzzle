@@ -1,0 +1,26 @@
+---
+# https://github.com/robbyrussell/oh-my-zsh/wiki/Plugins
+# https://github.com/sergko/role-oh-my-zsh
+# https://github.com/RaymiiOrg/ansible/tree/master/oh-my-zsh
+# https://github.com/jebovic/ansible-ohmyzsh
+
+
+- name: "apt soft install zsh"
+  apt: "name={{ item }} state={{apt_state}}"
+  become: yes
+  with_items:
+    - zsh
+  # when: apt_soft_zsh is defined and  apt_soft_zsh | default (true)
+
+- name: config 3rd party repos
+  become: yes
+  block:
+
+    - name: download and install omg-zsh
+      become: yes
+      command: "sh -c '$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)'"
+      # when: result_add_apt_rep.rc != 0
+      register: result_add_apt_rep_cmd
+
+    - debug:
+        var: result_add_apt_rep_cmd

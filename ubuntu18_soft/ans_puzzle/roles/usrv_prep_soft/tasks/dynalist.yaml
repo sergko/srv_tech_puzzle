@@ -1,0 +1,13 @@
+
+
+https://dynalist.io/standalone/download?file=dynalist.tar.gz
+
+cd /tmp
+wget https://dynalist.io/standalone/download?file=dynalist.tar.gz -O dynalist.tar.gz --verbose
+tar xvf dynalist.tar.gz
+#find . -name "dynalist" | xargs ls -ali
+#cd dynalist
+#chmod a+x dynalist
+#./dynalist
+find . -name "dynalist" | xargs --help
+find . -name "dynalist" | bash # run!

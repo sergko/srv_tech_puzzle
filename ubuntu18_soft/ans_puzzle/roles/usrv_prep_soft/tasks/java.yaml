@@ -1,0 +1,50 @@
+
+
+# https://dynalist.io/standalone/download?file=dynalist.tar.gz
+
+# cd /tmp
+# wget https://dynalist.io/standalone/download?file=dynalist.tar.gz -O dynalist.tar.gz --verbose
+# tar xvf dynalist.tar.gz
+# #find . -name "dynalist" | xargs ls -ali
+# #cd dynalist
+# #chmod a+x dynalist
+# #./dynalist
+# find . -name "dynalist" | xargs --help
+# find . -name "dynalist" | bash # run!
+
+# https://linuxconfig.org/how-to-install-java-on-ubuntu-19-10-eoan-ermine-linux
+
+- name: config 3rd party repos
+  become: yes
+  block:
+
+    - name: add Oracle Java JDK add-apt-repository
+      become: yes
+      command: "add-apt-repository ppa:linuxuprising/java"
+      # when: result_add_apt_rep.rc != 0
+      register: result_add_apt_rep_cmd
+
+    - debug:
+        var: result_add_apt_rep_cmd
+
+# $ sudo apt install oracle-java12-set-default
+# OR
+# $ sudo apt install oracle-java13-set-default
+
+# ---- 
+# $ sudo apt install openjdk-8-jdk
+# OR
+# $ sudo apt install openjdk-11-jdk
+# OR
+# $ sudo apt install openjdk-13-jdk
+# OR
+# $ sudo apt install openjdk-14-jdk
+
+    - name: "apt soft install Oracle Java JDK"
+      apt: "name={{ item }} state={{apt_state}}"
+      become: yes
+      with_items:
+        - oracle-java13-set-default      
+      when: apt_soft_gui is defined and  apt_soft_gui | default (true)
+
+  when: apt_skip_tmp #== 'false'

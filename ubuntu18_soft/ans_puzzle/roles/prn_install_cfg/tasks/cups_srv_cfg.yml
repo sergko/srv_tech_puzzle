@@ -1,0 +1,58 @@
+---
+# include tasks file for prn_install_cfg - configure server
+
+- name: substirute in /etc/cups/
+  become: yes
+  block:
+    - name: "replace /etc/cups/cupsd.conf"
+      replace: 
+        path: /etc/cups/cupsd.conf
+        regexp: '^LogLevel .*$'
+        replace: 'LogLevel warn'
+        validate: '/usr/sbin/cupsd -t'
+
+
+
+Browsing Off
+BrowseLocalProtocols dnssd
+WebInterface Yes
+
+<Location />
+  # Allow remote administration...
+  Order allow,deny
+  Allow @LOCAL
+  Allow 10.2.83.*
+</Location>
+<Location /admin>
+  # Allow remote administration...
+  Order allow,deny
+  Allow @LOCAL
+  Allow 10.2.83.*
+</Location>
+<Location /admin/conf>
+  # Allow remote access to the configuration files...
+  Order allow,deny
+  Allow @LOCAL
+  Allow 10.2.83.*
+</Location>
+<Location /admin/log>
+  Order allow,deny
+  Allow localhost
+#  Allow 10.2.83.15
+  Allow 10.2.83.*
+  # Allow remote access to the log files...
+#  Order allow,deny
+  Allow @LOCAL
+</Location>
+
+
+/////////////////////////////////////////
+  /etc/cups/cups-browsed.conf
+
+BrowseRemoteProtocols dnssd cups
+# BrowseLocalProtocols none
+BrowseLocalProtocols dnssd cups
+BrowseAllow All
+
+# BrowseOrder Deny,Allow
+BrowseOrder Allow,Deny
