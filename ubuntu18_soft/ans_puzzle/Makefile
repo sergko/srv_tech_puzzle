@@ -142,3 +142,16 @@ ans_soft:
 # 	ansible-playbook zfs.yaml -vv -i hosts.ini #--tags $(TAGS)  --skip-tags $(SKIP_TAGS)  #\
 # 	# ansible_ssh_user=ansrv ansible_ssh_password=Vol@nd666
 # 	#--ask-sudo-pass -v #vvvv
+zsh_omg:
+	@[ ! -d "./roles/zsh_omg_install_cfg" ] && mkdir -p ./roles/zsh_omg_install_cfg
+	@cd ./roles/zsh_omg_install_cfg && git clone git@github.com:sergko/role-oh-my-zsh.git
+	@TAGS=all ;\
+	echo TAGS=$(TAGS) ;\
+	SKIP_TAGS="" ;\
+	echo SKIP_TAGS=$(SKIP_TAGS) ;\
+	echo "ansible-playbook zsh_omg.yaml -vvv -i hosts.ini --tags $(TAGS)  --skip-tags $(SKIP_TAGS)" ;\
+	ansible-playbook zsh_omg.yaml -vv -i hosts.ini #--tags $(TAGS)  --skip-tags $(SKIP_TAGS)  #\
+	# ansible_ssh_user=ansrv ansible_ssh_password=Vol@nd666
+	#--ask-sudo-pass -v #vvvv
+
+	# zsh_omg_install_cfg

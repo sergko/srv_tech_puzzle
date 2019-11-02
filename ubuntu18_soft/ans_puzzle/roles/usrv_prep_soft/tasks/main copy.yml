@@ -93,9 +93,6 @@
         # - mdadm
         #dumpet xorriso squashfs-tools gddrescue isolinux # CD TOOLS
       when: apt_soft_sys is defined and  apt_soft_sys | default (true)
-    
-    - include_tasks: zsh_omg.yml
-      when: apt_soft_zsh
       
     # Check+fix for Badblocks EXT4
     # Check and fix BADs on physical disk

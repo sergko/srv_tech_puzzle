@@ -7,7 +7,7 @@
     # - { role: zfs_install_cfg }   
     - { role: usrv_prep_soft, when: ansible_system == 'Linux' }    # только если ОС линух
 #    - { role: smb_install_cfg } #when: tag=[soft,smb]
-#    - { role: prn_install_cfg }       
+#    - { role: prn_install_cfg }
 #    - owncloud_install_local # безусловный и безпараметричный запуск роли
     # - { role: owncloud_install_local, when: ansible_system == 'Linux' }    # только если ОС линух
 # а так с параметрами

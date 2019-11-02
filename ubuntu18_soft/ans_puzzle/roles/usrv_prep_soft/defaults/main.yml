@@ -10,6 +10,7 @@ apt_soft_common: true
 apt_soft_dev: true
 apt_soft_kde: true
 apt_soft_sys: true
+apt_soft_zsh: true
 apt_soft_srv: true
 apt_soft_gui: true
 apt_soft_net: true
