@@ -13,9 +13,9 @@
 #       - jmespath
 #   #     - django>1.11.0,<1.12.0
 #   #     - bottle>0.10,<0.20,!=0.11
-#   # when: apt_soft_common is defined and  apt_soft_common | default (true) 
+#   # when: apt_soft_common is defined and  apt_soft_common | default (true)
 
-- name: SMB install 
+- name: SMB install
   become: yes
   block:
     - name: "apt cache update"
@@ -32,8 +32,8 @@
         - samba
         - samba-common
         - cifs-utils
-        - smbclient   
-        - system-config-samba     
+        - smbclient
+        - system-config-samba
       when: "{{ apt_tool_smb is defined and apt_tool_smb | default (false) }}"
   when: "{{ smb_cfg_skip is defined and smb_cfg_skip | default (false) }}"
 
@@ -58,7 +58,7 @@
         owner: root
         group: root
         mode: 0644
-      # backup: yes  
+      # backup: yes
       # notify:
       #   - restart nmbd
       #   - restart smbd
@@ -75,8 +75,8 @@
     # - debug: '{{ result_testparm.stderr }}'
     - name: Debug
       debug:
-        var: result_testparm.stderr 
-        # msg: 
+        var: result_testparm.stderr
+        # msg:
 
     - name: restart smbd+nmbd if configfile is alive/comptible
       command: echo '---------------Restarting smbd+nmbd--------------------'
@@ -84,7 +84,7 @@
         # when: redis_config.changed
       notify:
         - restart nmbd
-        - restart smbd    
+        - restart smbd
 
   # when: "{{ smb_cfg_skip is defined and smb_cfg_skip | default (false) }}"
 
@@ -95,7 +95,7 @@
 - debug:
     var: ansible_facts.services
 # - debug:
-#     var: ansible_facts.services['smb']    
+#     var: ansible_facts.services['smb']
 
 # - debug: msg="{{ addresses | json_query(\"private_man[?type=='fixed'].addr\") }}"
 
@@ -147,8 +147,8 @@
 # - name: Debug
 #   debug:
 #     var: "services_state.ansible_facts.services[{{ item }}]"
-#   with_items: ['smb','smbd.service','nmb','nmbd.service']  #['smb','smbd.service','smb','smbd.service']  
-    # var: services_state.ansible_facts.services['smb','smbd.service','smb','smbd.service']    
+#   with_items: ['smb','smbd.service','nmb','nmbd.service']  #['smb','smbd.service','smb','smbd.service']
+    # var: services_state.ansible_facts.services['smb','smbd.service','smb','smbd.service']
 # @MaksimLuzik call it like: var: firewall_status.ansible_facts.services['firewalld.service']
 #>@MaksimLuzik call it like: var: services_state.ansible_facts.services['smb','smbd.service','smb','smbd.service'] #samba-ad-dc
 #>@MaksimLuzik call it like: var: services_state.ansible_facts.services['smb'] #,'smbd.service','smb','smbd.service'] #samba-ad-dc

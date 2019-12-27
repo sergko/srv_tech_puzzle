@@ -3,8 +3,10 @@
 - hosts: vpn
   gather_facts: true
   roles:
-    - {role: ansi-role-ovpn, clients: [sergko, serg],
-                        openvpn_port: 4300}
+#    - {role: ansi-role-ovpn, clients: [sergko, serg],
+#                        openvpn_port: 4300}
+    - {role: vncserver_inst}
+#    - {role: vncserver_inst, tags: ['vnc_inst']}
 
 
 

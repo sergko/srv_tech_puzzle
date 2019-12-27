@@ -1,0 +1,12 @@
+[Unit]
+Description=VncSRV
+
+[Service]
+Type=forking
+ExecStart=/usr/local/bin/vncsrv start
+ExecStop=/usr/local/bin/vncsrv stop
+ExecReload=/usr/local/bin/vncsrv restart
+User=vnc
+
+[Install]
+WantedBy=multi-user.target

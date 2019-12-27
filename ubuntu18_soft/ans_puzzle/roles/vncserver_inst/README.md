@@ -6,33 +6,24 @@ A brief description of the role goes here.
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+root@usrv:~# vncsrv start
 
-Role Variables
---------------
+You will require a password to access your desktops.
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+Password:/usr/bin/xauth:  file /root/.Xauthority does not exist
 
-Dependencies
-------------
+New 'usrv:2 (root)' desktop at :2 on machine usrv
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+Starting applications specified in /etc/X11/Xvnc-session
+Log file is /root/.vnc/usrv:2.log
 
-Example Playbook
-----------------
+Use xtigervncviewer -SecurityTypes VncAuth -passwd /root/.vnc/passwd :2 to connect to the VNC server.
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+root@usrv:~#
+A VNC/X11 server is already running as :2 on machine usrv
+root@usrv:~# A VNC/X11 server is already running as :2 on machine usrv
+root@usrv:~# ^C
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
-
-License
--------
-
-BSD
-
-Author Information
-------------------
-
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+Passwd:
+Full: vncsrv
+ReadOnly: vncvnc

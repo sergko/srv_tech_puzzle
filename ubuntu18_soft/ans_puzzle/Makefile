@@ -10,12 +10,12 @@ useradd:
 	@groupadd smbg
 	@usermod -G smbg smbu
 	@sudo smbpasswd -a smbu #IMPORTANT!!!! but this manuall enter of pass.....
-	@useradd -m -d /home/nata -s /bin/bash  -c "Natali user" nata 
+	@useradd -m -d /home/nata -s /bin/bash  -c "Natali user" nata
 	@echo Enter password for user: nata
 	@passwd nata #  !QAZ2wsx
 	@usermod -G smbg nata
 	@sudo smbpasswd -a nata #IMPORTANT!!!! but this manuall enter of pass.....
-	@useradd -m -d /home/kids -s /bin/bash  -c "Kids user" kids 
+	@useradd -m -d /home/kids -s /bin/bash  -c "Kids user" kids
 	@echo Enter password for user: kids
 	@passwd kids #  12345678
 	@usermod -G smbg kids
@@ -25,7 +25,7 @@ useradd:
 # Loaded services file OK.
 # Server role: ROLE_STANDALONE
 #-----
-#        smb passwd file = /etc/samba/smbpasswd	
+#        smb passwd file = /etc/samba/smbpasswd
 # root@usrv:~# cat /etc/passwd | grep smbu
 # smbu:x:1002:1002:SMBUser Service user:/home/smbu:/bin/bash
 # root@usrv:~# cat /etc/shadow | grep smbu
@@ -79,7 +79,7 @@ ssh-keygen-ansrv:
 	@ssh-keygen -t rsa -C "ansrv@sergko.srvs" -f ./files/id_rsa_ansrv
 ssh-copy-id:
 	@ssh-copy-id ansrv@usrv -i ./files/id_rsa_ansrv.pub
-# serg@np:~/Rep_gitkraken/srv_tech_puzzle/ubuntu18_soft/ans_puzzle/files$ ssh-copy-id ansrv@usrv 
+# serg@np:~/Rep_gitkraken/srv_tech_puzzle/ubuntu18_soft/ans_puzzle/files$ ssh-copy-id ansrv@usrv
 # /usr/bin/ssh-copy-id: ERROR: failed to open ID file '/home/serg/.ssh/id_rsa_ansrv': No such file
 #         (to install the contents of '/home/serg/.ssh/id_rsa_ansrv.pub' anyway, look at the -f option)
 # serg@np:~/Rep_gitkraken/srv_tech_puzzle/ubuntu18_soft/ans_puzzle/files$ ssh-copy-id ansrv@usrv -f
@@ -142,3 +142,14 @@ ans_soft:
 # 	ansible-playbook zfs.yaml -vv -i hosts.ini #--tags $(TAGS)  --skip-tags $(SKIP_TAGS)  #\
 # 	# ansible_ssh_user=ansrv ansible_ssh_password=Vol@nd666
 # 	#--ask-sudo-pass -v #vvvv
+
+vnc_inst:
+	TAGS=all ;\
+	echo TAGS=$(TAGS) ;\
+	SKIP_TAGS="" ;\
+	echo SKIP_TAGS=$(SKIP_TAGS) ;\
+	echo "ansible-playbook netsoft.yaml -vvv -i hosts.ini --tags $(TAGS)  --skip-tags $(SKIP_TAGS)" ;\
+	ansible-playbook netsoft.yaml  -v -i hosts.ini
+	#--tags $(TAGS)  --skip-tags $(SKIP_TAGS)  #\
+	# ansible_ssh_user=ansrv ansible_ssh_password=Vol@nd666
+	#--ask-sudo-pass -v #vvvv

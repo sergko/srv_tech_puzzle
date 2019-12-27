@@ -71,6 +71,8 @@
         - atop
         - htop
         - iotop
+        - uuid
+        - id-utils
         # - badblocks
         # - btrfs-progs 
         # - btrfs-tools

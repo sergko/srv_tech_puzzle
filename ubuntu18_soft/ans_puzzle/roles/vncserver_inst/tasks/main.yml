@@ -6,10 +6,98 @@
   become: yes
   failed_when: False
 
-- name: "apt soft install"
-  apt: "name={{ item }} state=present"
-  become: yes
-  with_items:
-    - python-setuptools
-    - python-pip
+#deprecated
+# - name: "apt soft install"
+  # apt: "name={{ item }} state=present"
+  # become: yes
+  # with_items:
+  #   - vnc4server
+  #   - whois
+  #   - sudo
 
+- name: "apt soft install"
+  become: yes
+  apt:
+    name: ['vnc4server', 'whois', 'sudo']
+
+# in case scratch installed server - need some X erver e.g. light xfce4
+# apt-get install xfce4 xfce4-goodies tightvncserver
+
+# adduser vnc
+# gpasswd -a vnc sudo
+
+- name: Create a login user
+  become: yes
+  user:
+    name: vnc
+    # mkpasswd --method=sha-512 vnc
+    password: '$6$Wy8VV3fa$EIaBNv9m.w1Amu47hunHHxKMse2ewDXxkM4UIP4upFmYJPclpfOaMaXtc0K65Z9Vp2l6NTXisHiO8YMl7qd4e.'
+    groups:
+      - sudo
+      # - docker
+    state: present
+    shell: /bin/bash       # Defaults to /bin/bash
+    system: no             # Defaults to no
+    createhome: yes        # Defaults to yes
+    home: /home/vnc  # Defaults to /home/<username>
+    # system: yes             # Defaults to no
+    # createhome: no        # Defaults to yes
+
+# mkdir -p /usr/local/bin
+
+# cp vncsrv /usr/local/bin/vncsrv
+
+# sudo chown vnc:vnc /usr/local/bin/vncsrv
+# sudo chmod +x /usr/local/bin/vncsrv
+
+- name: Copy file with owner and permissions
+  become: yes
+  copy:
+    src: vncsrv
+    dest: /usr/local/bin/vncsrv
+    owner: vnc
+    group: vnc
+    mode: 'a+x'
+
+- name: Copy passwd file with owner and permissions
+  become: yes
+  copy:
+    src:
+    dest: /usr/local/bin/vncsrv
+    owner: vnc
+    group: vnc
+    mode: 'a+x'
+
+    passwd
+# cp vncsrv.service /lib/systemd/system/vncsrv.service
+- name: Copy file with owner and permissions
+  become: yes
+  copy:
+    src: vncsrv.service
+    dest: /lib/systemd/system/vncsrv.service
+    # owner: vnc
+    # group: vnc
+    # mode: 'a+x'
+
+# sudo systemctl enable vncsrv.service
+# sudo systemctl -l status vncsrv.service
+# sudo systemctl daemon-reload
+
+- name: start vncsrv
+  become: yes
+  systemd:
+    state: started
+    name: vncsrv
+    enabled: yes
+    daemon_reload: yes
+  register: vncsrv_status
+
+- debug:
+    msg: "{{ vncsrv_status.status }}"
+    # msg: "{{ vncsrv_status.stdout_lines }}"
+
+- name: list systemd
+  become: yes
+  command: "systemctl -l status vncsrv.service"
+
+# Use xtigervncviewer -SecurityTypes VncAuth -passwd /root/.vnc/passwd :2 to connect to the VNC server.
