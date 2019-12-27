@@ -62,13 +62,12 @@
 - name: Copy passwd file with owner and permissions
   become: yes
   copy:
-    src:
-    dest: /usr/local/bin/vncsrv
+    src: passwd
+    dest: /home/vnc/.vnc/passwd
     owner: vnc
     group: vnc
-    mode: 'a+x'
+    mode: '0600'
 
-    passwd
 # cp vncsrv.service /lib/systemd/system/vncsrv.service
 - name: Copy file with owner and permissions
   become: yes
