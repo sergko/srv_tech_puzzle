@@ -150,6 +150,7 @@ vnc_inst:
 	echo SKIP_TAGS=$(SKIP_TAGS) ;\
 	echo "ansible-playbook netsoft.yaml -vvv -i hosts.ini --tags $(TAGS)  --skip-tags $(SKIP_TAGS)" ;\
 	ansible-playbook netsoft.yaml  -v -i hosts.ini
+
 	#--tags $(TAGS)  --skip-tags $(SKIP_TAGS)  #\
 	# ansible_ssh_user=ansrv ansible_ssh_password=Vol@nd666
 	#--ask-sudo-pass -v #vvvv

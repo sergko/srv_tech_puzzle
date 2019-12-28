@@ -68,6 +68,36 @@
     group: vnc
     mode: '0600'
 
+- name: Copy xstartup file with owner and permissions
+  become: yes
+  copy:
+    src: xstartup
+    dest: /home/vnc/.vnc/xstartup
+    owner: vnc
+    group: vnc
+    mode: '0755'
+
+# - name: Copy xstartup file with owner and permissions
+#   become: yes
+#   copy:
+#     src: xstartup
+#     # dest: /etc/xstartup
+#     dest: /tmp/xstartup
+#     owner: vnc
+#     group: vnc
+#     mode: '0755'
+
+
+# - name: debug xstartup
+#   become: yes
+#   shell: "whoami ; ls -ali /etc/xstartup ; cat /etc/xstartup"
+#   # shell: "whoami ; ls -ali /tmp/xstartup ; cat /tmp/xstartup"
+#   register: vncsrv_status
+
+# - debug:
+#     # msg: "{{ vncsrv_status.stdout }}"
+#     msg: "{{ vncsrv_status.stdout_lines }}"
+
 # cp vncsrv.service /lib/systemd/system/vncsrv.service
 - name: Copy file with owner and permissions
   become: yes
@@ -99,6 +129,7 @@
   become: yes
   command: "systemctl -l status vncsrv.service"
   register: vncsrv_status
+  ignore_errors: yes
 # Use xtigervncviewer -SecurityTypes VncAuth -passwd /root/.vnc/passwd :2 to connect to the VNC server.
 
 - debug:
@@ -123,15 +154,35 @@
   become: yes
   shell: "ps -aux | grep -i vnc"
   register: vncsrv_status
+  ignore_errors: yes
 
 - debug:
     # msg: "{{ vncsrv_status.stdout }}"
     msg: "{{ vncsrv_status.stdout_lines }}"
 
+#----
+- name: STOP VNC server for vnc user
+  become: yes
+  shell: "sudo -u vnc vncsrv stop"
+  register: vncsrv_status
+  ignore_errors: yes
+
+- name: REstart vncsrv
+  become: yes
+  systemd:
+    state: restarted
+    name: vncsrv
+    enabled: yes
+    daemon_reload: yes
+  register: vncsrv_status
+
+#----
+
 - name: RUN VNC server for vnc user
   become: yes
   shell: "sudo -u vnc vncsrv start "
   register: vncsrv_status
+  ignore_errors: yes
 
 - debug:
     # msg: "{{ vncsrv_status.stdout }}"
@@ -141,7 +192,15 @@
   become: yes
   shell: "tail -n 30 /home/vnc/.vnc/usrv:2.log"
   register: vncsrv_status
+  ignore_errors: yes
 
 - debug:
     # msg: "{{ vncsrv_status.stdout }}"
     msg: "{{ vncsrv_status.stdout_lines }}"
+
+- debug:
+    msg: "Please USE now:\
+sh vnc@usrv -L 5902:localhost:5902 \
+-> KRDC \
+localhost:5902 + vnc password \
+"

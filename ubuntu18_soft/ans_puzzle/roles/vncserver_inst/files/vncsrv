@@ -4,7 +4,12 @@ PASSWD="/home/vnc/.vnc/passwd"
 DISPLAY="2"
 DEPTH="16"
 GEOMETRY="1024x768"
-OPTIONS="-depth ${DEPTH} -geometry ${GEOMETRY} :${DISPLAY} -passwd ${PASSWD} -localhost yes -noreset"
+XSTARTUP="/home/vnc/.vnc/xstartup"
+# XSTARTUP="/etc/xstartup"
+# XSTARTUP="/tmp/xstartup"
+# OPTIONS="-depth ${DEPTH} -geometry ${GEOMETRY} :${DISPLAY} -passwd ${PASSWD} -xstartup ${XSTARTUP} -verbose"
+OPTIONS="-depth ${DEPTH} -geometry ${GEOMETRY} :${DISPLAY} -passwd ${PASSWD}" # -verbose"
+# -localhost no -noreset -SecurityTypes TLSVnc
             # -localhost yes|no
             # [-PasswordFile]        Password file for security types VncAuth, TLSVnc, and X509Vnc.
             #                        The default password file is ~/.vnc/passwd
@@ -15,6 +20,7 @@ OPTIONS="-depth ${DEPTH} -geometry ${GEOMETRY} :${DISPLAY} -passwd ${PASSWD} -lo
             # [-verbose]             Be more verbose
             # [-useold]              Only start VNC server if not already running
             # [-name <desktop-name>] VNC desktop name
+        # TLSVnc
 
 
 case "$1" in

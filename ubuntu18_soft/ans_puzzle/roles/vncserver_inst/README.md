@@ -17,7 +17,13 @@ New 'usrv:2 (root)' desktop at :2 on machine usrv
 Starting applications specified in /etc/X11/Xvnc-session
 Log file is /root/.vnc/usrv:2.log
 
-Use xtigervncviewer -SecurityTypes VncAuth -passwd /root/.vnc/passwd :2 to connect to the VNC server.
+Install
+apt install tigervnc-viewer
++
+Use xtigervncviewer -SecurityTypes VncAuth -passwd /root/.vnc/passwd :2
+xtigervncviewer -SecurityTypes VncAuth -passwd ~/.vnc/passwd :2
+xtigervncviewer -SecurityTypes VncAuth -passwd ~/.vnc/passwd :2
+to connect to the VNC server.
 
 root@usrv:~#
 A VNC/X11 server is already running as :2 on machine usrv
@@ -44,3 +50,5 @@ vnc_ssh:
 	ssh vnc@usrv -L 5902:localhost:5902
 -> KRDC
 localhost:5902 + vnc password
+
+less /usr/bin/vncserver
