@@ -153,3 +153,6 @@ vnc_inst:
 	#--tags $(TAGS)  --skip-tags $(SKIP_TAGS)  #\
 	# ansible_ssh_user=ansrv ansible_ssh_password=Vol@nd666
 	#--ask-sudo-pass -v #vvvv
+
+vnc_ssh:
+	ssh vnc@usrv -L 5902:localhost:5902

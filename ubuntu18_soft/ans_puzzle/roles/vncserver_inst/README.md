@@ -27,3 +27,20 @@ root@usrv:~# ^C
 Passwd:
 Full: vncsrv
 ReadOnly: vncvnc
+
+sudo -u vnc vncsrv start
+->
+vnc      11373  0.4  0.3 421960 46112 pts/4    Sl   22:19   0:00 /usr/bin/Xtigervnc :2 -desktop usrv:2 (vnc) -auth /home/vnc/.Xauthority -geometry 1024x768 -depth 16 -rfbwait 30000 -rfbauth /home/vnc/.vnc/passwd -rfbport 5902 -pn -localhost -SecurityTypes VncAuth
+
+su@np:~$ ssh-copy-id vnc@usrv
+->
+KRDC
+vnc://usrv:5902 + ssh tunnel enabled over localhost + user vnc
+-> need enter ssh password "vnc"
+and then vnc password "vncsrv"
+
+or make manual ssh tunnel
+vnc_ssh:
+	ssh vnc@usrv -L 5902:localhost:5902
+-> KRDC
+localhost:5902 + vnc password
