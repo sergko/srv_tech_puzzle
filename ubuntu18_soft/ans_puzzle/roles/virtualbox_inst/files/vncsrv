@@ -1,0 +1,43 @@
+#!/bin/bash
+PATH="$PATH:/usr/bin/"
+PASSWD="/home/vnc/.vnc/passwd"
+DISPLAY="2"
+DEPTH="16"
+GEOMETRY="1024x768"
+# GEOMETRY="1366x768"
+# GEOMETRY="1900x1200"
+# GEOMETRY="1900x1080"
+XSTARTUP="/home/vnc/.vnc/xstartup"
+# XSTARTUP="/etc/xstartup"
+# XSTARTUP="/tmp/xstartup"
+# OPTIONS="-depth ${DEPTH} -geometry ${GEOMETRY} :${DISPLAY} -passwd ${PASSWD} -xstartup ${XSTARTUP} -verbose"
+OPTIONS="-depth ${DEPTH} -geometry ${GEOMETRY} :${DISPLAY} -passwd ${PASSWD}" # -verbose"
+# -localhost no -noreset -SecurityTypes TLSVnc
+            # -localhost yes|no
+            # [-PasswordFile]        Password file for security types VncAuth, TLSVnc, and X509Vnc.
+            #                        The default password file is ~/.vnc/passwd
+            # [-passwd]              Alias for PasswordFile
+            # [-rfbauth]             Alias for PasswordFile
+# qqWarning: VNC extension does not support -reset, terminating instead. Use -noreset to prevent termination.
+            # [-dry-run]             Take no real action
+            # [-verbose]             Be more verbose
+            # [-useold]              Only start VNC server if not already running
+            # [-name <desktop-name>] VNC desktop name
+        # TLSVnc
+
+
+case "$1" in
+start)
+/usr/bin/vncserver ${OPTIONS}
+;;
+
+stop)
+/usr/bin/vncserver -kill :${DISPLAY}
+;;
+
+restart)
+$0 stop
+$0 start
+;;
+esac
+exit 0

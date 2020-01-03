@@ -18,7 +18,9 @@
 - name: "apt soft install"
   become: yes
   apt:
-    name: ['vnc4server', 'whois', 'sudo']
+    # name: ['vnc4server', 'whois', 'sudo']
+    # sudo apt-get install mate-desktop-environment-extras caja*
+    name: ['vnc4server', 'whois', 'sudo', 'mate-desktop-environment-extras', 'caja*']
 
 # in case scratch installed server - need some X erver e.g. light xfce4
 # apt-get install xfce4 xfce4-goodies tightvncserver

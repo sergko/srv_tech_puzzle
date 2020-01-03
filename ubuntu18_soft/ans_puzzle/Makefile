@@ -157,3 +157,11 @@ vnc_inst:
 
 vnc_ssh:
 	ssh vnc@usrv -L 5902:localhost:5902
+
+vb_inst:
+	TAGS=all ;\
+	echo TAGS=$(TAGS) ;\
+	SKIP_TAGS="" ;\
+	echo SKIP_TAGS=$(SKIP_TAGS) ;\
+	echo "ansible-playbook vb.yaml -vvv -i hosts.ini --tags $(TAGS)  --skip-tags $(SKIP_TAGS)" ;\
+	ansible-playbook vb.yaml  -v -i hosts.ini

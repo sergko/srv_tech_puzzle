@@ -1,0 +1,90 @@
+---
+# tasks file for vncserver_inst
+
+# - name: "apt cache update"
+#   become: yes
+#   shell: "echo 'add VirtualBox repository:' \
+# wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add - && \
+# wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add - && \
+# echo 'added sUCCESSFULLY!!!'"
+
+#   # failed_when: False
+
+# wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add -
+# wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
+
+- name: config 3rd party repos for VirtualBox
+  become: yes
+  block:
+    #----------------------------------
+    #MS VS Code
+    #----------------------------------
+    # https://linuxize.com/post/how-to-install-visual-studio-code-on-ubuntu-18-04/
+    # wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | sudo apt-key add -
+    # sudo add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main"
+    # sudo apt update
+    # sudo apt install code
+
+    # always try to use HTTPS. I'm not sure why the nginx folks don't provide it.
+    - name: add Oracle VirtualBox2016 apt-key (Legacy)
+      apt_key:
+        url: https://www.virtualbox.org/download/oracle_vbox_2016.asc
+        state: present
+      # when: linux_old is defined and linux_old
+    - name: add Oracle VirtualBox apt-key
+      apt_key:
+        url: https://www.virtualbox.org/download/oracle_vbox.asc
+        state: present
+
+    #replaced by command below
+    # - name: add MS VS Code apt repository
+    #   become: yes
+    #   apt_repository:
+    #     # repo: 'deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main'
+    #     # repo: deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main
+    #     repo: deb https://packages.microsoft.com/repos/vscode stable main
+    #     state: present
+    #     # filename: msvscode
+    #     # update_cache: yes
+
+    - name: add Oracle VirtualBox add-apt-repository
+      become: yes
+      command: add-apt-repository "deb [arch=amd64] https://download.virtualbox.org/virtualbox/debian eoan contrib"
+      # when: linux_old is defined and linux_old
+    # sudo add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main"
+
+    - name: "apt cache update"
+      apt: "update_cache=True"
+      become: yes
+      failed_when: False
+
+    - name: "apt soft install"
+      become: yes
+      apt:
+        # name: ['vnc4server', 'whois', 'sudo']
+        # sudo apt-get install mate-desktop-environment-extras caja*
+        name: ['virtualbox-6.1']
+
+# in case scratch installed server - need some X erver e.g. light xfce4
+# apt-get install xfce4 xfce4-goodies tightvncserver
+
+# adduser vnc
+# gpasswd -a vnc sudo
+
+# - name: Create a login user
+#   become: yes
+#   user:
+#     name: vnc
+#     # mkpasswd --method=sha-512 vnc
+#     password: '$6$Wy8VV3fa$EIaBNv9m.w1Amu47hunHHxKMse2ewDXxkM4UIP4upFmYJPclpfOaMaXtc0K65Z9Vp2l6NTXisHiO8YMl7qd4e.'
+#     groups:
+#       - sudo
+#       # - docker
+#     state: present
+#     shell: /bin/bash       # Defaults to /bin/bash
+#     system: no             # Defaults to no
+#     createhome: yes        # Defaults to yes
+#     home: /home/vnc  # Defaults to /home/<username>
+#     # system: yes             # Defaults to no
+#     # createhome: no        # Defaults to yes
+
