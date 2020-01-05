@@ -158,6 +158,9 @@ vnc_inst:
 vnc_ssh:
 	ssh vnc@usrv -L 5902:localhost:5902
 
+vbweb_ssh:
+	ssh vnc@usrv -L 18083:localhost:18083
+
 vb_inst:
 	TAGS=all ;\
 	echo TAGS=$(TAGS) ;\

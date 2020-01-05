@@ -63,28 +63,64 @@
       apt:
         # name: ['vnc4server', 'whois', 'sudo']
         # sudo apt-get install mate-desktop-environment-extras caja*
-        name: ['virtualbox-6.1']
+        name: ['virtualbox', 'vagrant']
+        # name: ['virtualbox-6.1'] # IS NOT COMPATIBLE with vagrant 2.2.3 (probably up to 2.2.6 too)
 
-# in case scratch installed server - need some X erver e.g. light xfce4
-# apt-get install xfce4 xfce4-goodies tightvncserver
+# Could error with
+# virtualbox-dkms set to manually installed.
+# linux-headers-generic is already the newest version (5.3.0.24.28).
+# may be install manually
+# OR reboot host and try again
 
-# adduser vnc
-# gpasswd -a vnc sudo
+    - name: "apt soft temporary remove"
+      become: yes
+      apt:
+        state: absent
+        name: ['vagrant-libvirt']
 
-# - name: Create a login user
-#   become: yes
-#   user:
-#     name: vnc
-#     # mkpasswd --method=sha-512 vnc
-#     password: '$6$Wy8VV3fa$EIaBNv9m.w1Amu47hunHHxKMse2ewDXxkM4UIP4upFmYJPclpfOaMaXtc0K65Z9Vp2l6NTXisHiO8YMl7qd4e.'
-#     groups:
-#       - sudo
-#       # - docker
-#     state: present
-#     shell: /bin/bash       # Defaults to /bin/bash
-#     system: no             # Defaults to no
-#     createhome: yes        # Defaults to yes
-#     home: /home/vnc  # Defaults to /home/<username>
-#     # system: yes             # Defaults to no
-#     # createhome: no        # Defaults to yes
+# vagrant plugin install vagrant-disksize vagrant-vbguest
+    - name: add vagrant plugins
+      become: yes
+      command: vagrant plugin install vagrant-disksize vagrant-vbguest
+      # when: linux_old is defined and linux_old
 
+    # - name: "apt soft back after temporary remove"
+    #   become: yes
+    #   apt:
+    #     state: present
+    #     name: ['vagrant-libvirt']
+####################################
+# CONFIGURATION #
+# /mnt/zfs05tb_kvm/vbox
+# VM STORAGE
+# https://www.virtualbox.org/manual/ch08.html#vboxmanage-setproperty
+# VBoxManage setproperty
+# This command is used to change global settings which affect the entire Oracle VM VirtualBox installation. Some of these correspond to the settings in the Global Settings dialog in the graphical user interface. The following properties are available:
+# machinefolder
+#     Specifies the default folder in which virtual machine definitions are kept. See Section 10.1, “Where Oracle VM VirtualBox Stores its Files”.
+vboxmanage getproperty machinefolder
+
+vboxmanage list [--long|-l] [--sorted|-s]
+vms|runningvms|ostypes|hostdvds|hostfloppies|intnets|bridgedifs|hostonlyifs|natnets|dhcpservers|hostinfo|hostcpuids|hddbackends|hdds|dvds|floppies|usbhost|usbfilters|systemproperties|extpacks|groups|webcams|screenshotformats|cloudproviders|cloudprofiles
+
+vboxmanage   setproperty
+  machinefolder default|<folder> |
+  hwvirtexclusive on|off |
+  vrdeauthlibrary default|<library> |
+  websrvauthlibrary default|null|<library> |
+  vrdeextpack null|<library> |
+  autostartdbpath null|<folder> |
+  loghistorycount <value>
+  defaultfrontend default|<name>
+  logginglevel <log setting>
+  proxymode system|noproxy|manual
+  proxyurl <url>
+
+vboxmanage
+
+vboxmanage
+vboxmanage
+vboxmanage
+vboxmanage
+  natnetwork                list [<pattern>]
+                            add /  remove / start / stop
