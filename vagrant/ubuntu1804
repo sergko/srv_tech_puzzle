@@ -22,7 +22,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.define "ubuntu1804" do |ubuntu|
     ubuntu.vm.box = "ubuntu/bionic64"
-    ubuntu.vm.box_version = "v20191218.0.0"
+    ubuntu.vm.box_version = "20191218.0.0"
 
     ubuntu.disksize.size = '150GB'
     ubuntu.vm.provider "virtualbox" do |vb|
@@ -66,7 +66,8 @@ Vagrant.configure("2") do |config|
 #  ]
     end
 
-    ubuntu.vm.network "private_network", ip: "10.2.83.210"
+    # ubuntu.vm.network "private_network", ip: "10.2.83.210"
+    ubuntu.vm.network "public_network", ip: "10.2.83.210"
     ubuntu.vm.network "forwarded_port", guest: 22, host: 21022, protocol: "tcp", auto_correct: true        #SSH
     ubuntu.vm.network "forwarded_port", guest: 80, host: 21080, protocol: "tcp", auto_correct: true        #HTTP
 #    ubuntu.vm.synced_folder "~/Documents/", "/code", create: false
@@ -106,26 +107,6 @@ Vagrant.configure("2") do |config|
       source: "files/id_rsa_vagrant.pub", destination: "/tmp/id_rsa_vagrant.pub"
     ubuntu.vm.provision "ssh_keys_provision-4-1", type: "shell",
       inline: "cat /tmp/id_rsa_vagrant.pub >> /home/vagrant/.ssh/authorized_keys"
-
-#     # Installing Docker Engine
-#     $install_docker_1 = <<-SCRIPT
-# #      sudo apt-get update
-# #      sudo apt-get upgrade -y
-#       sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-#       sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-#       sudo apt-get update
-#       sudo apt-get upgrade -y
-#       sudo apt-get install -y linux-image-extra-$(uname -r) linux-image-extra-virtual  linux-headers-generic linux-headers-$(uname -r)
-#       sudo apt-get install -y apt-transport-https ca-certificates ssl-cert curl software-properties-common
-#       sudo apt-get install -y docker-ce=18.06.0~ce~3-0~ubuntu
-# #      sudo sed -i -e 's/#DOCKER_OPTS=\"--dns 8.8.8.8 --dns 8.8.4.4\"/DOCKER_OPTS=\"--insecure-registry 10.12.228.6\"/g' /etc/default/docker
-#       sudo sed -i -e 's/#DOCKER_OPTS=\"--dns 8.8.8.8 --dns 8.8.4.4\"/DOCKER_OPTS=\"--insecure-registry 192.168.240.174:65000 --insecure-registry 10.12.228.6\"/g' /etc/default/docker
-#       sudo cat /etc/default/docker
-#       sudo service docker restart
-#       echo "DOCKER ENGINE INSTALLED"
-#     SCRIPT
-# #    ubuntu.vm.provision "INSTALLING DOCKER ENGINE", type: "shell", inline: $install_docker_1, privileged: false
-
 
   end
   config.vm.define "ubuntu1804", autostart: false
