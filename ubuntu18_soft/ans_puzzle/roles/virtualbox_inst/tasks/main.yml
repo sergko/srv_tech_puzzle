@@ -66,6 +66,7 @@
         name: ['virtualbox', 'vagrant']
         # name: ['virtualbox-6.1'] # IS NOT COMPATIBLE with vagrant 2.2.3 (probably up to 2.2.6 too)
 
+
 # Could error with
 # virtualbox-dkms set to manually installed.
 # linux-headers-generic is already the newest version (5.3.0.24.28).
@@ -90,45 +91,27 @@
     #     state: present
     #     name: ['vagrant-libvirt']
 
-vboxusers - add to this group necessary users!
+# vboxusers - add to this group necessary users!
+- name: Add the users with a bash shell, appending the groups  admins,sudo,docker to the user's groups
+  user:
+    name: {{ item }}
+    # shell: /bin/bash
+    groups: admins,sudo,docker
+    append: yes
+  with_items:
+    - vnc
+    - su
+    - serg
 
-####################################
-# CONFIGURATION #
-# /mnt/zfs05tb_kvm/vbox
-# VM STORAGE
-# https://www.virtualbox.org/manual/ch08.html#vboxmanage-setproperty
-# VBoxManage setproperty
-# This command is used to change global settings which affect the entire Oracle VM VirtualBox installation. Some of these correspond to the settings in the Global Settings dialog in the graphical user interface. The following properties are available:
-# machinefolder
-#     Specifies the default folder in which virtual machine definitions are kept. See Section 10.1, “Where Oracle VM VirtualBox Stores its Files”.
+- name: add common storage for VMs to root user
+  become: yes
+  command: vboxmanage setproperty machinefolder /mnt/zfs05tb_kvm/vbox
 
-# vboxmanage list [--long|-l] [--sorted|-s]
-#   vms|runningvms|ostypes|hostdvds|hostfloppies|intnets|bridgedifs|hostonlyifs|natnets|dhcpservers|hostinfo|hostcpuids|hddbackends|hdds|dvds|floppies|usbhost|usbfilters|systemproperties|extpacks|groups|webcams|screenshotformats|cloudproviders|cloudprofiles
-# vboxmanage list systemproperties #for user who run this command!!!!
+- name: add common storage for VMs to other users
+  become: yes
+  shell: sudo -u {{ item }} 'vboxmanage setproperty machinefolder /mnt/zfs05tb_kvm/vbox'
+  with_items:
+    - vnc
+    - su
+    - serg
 
-# vboxmanage   setproperty
-#   machinefolder default|<folder> |
-#   hwvirtexclusive on|off |
-#   vrdeauthlibrary default|<library> |
-#   websrvauthlibrary default|null|<library> |
-#   vrdeextpack null|<library> |
-#   autostartdbpath null|<folder> |
-#   loghistorycount <value>
-#   defaultfrontend default|<name>
-#   logginglevel <log setting>
-#   proxymode system|noproxy|manual
-#   proxyurl <url>
-
-vboxmanage setproperty machinefolder /mnt/zfs05tb_kvm/vbox
-
-
-# vboxmanage
-#   natnetwork                list [<pattern>]
-#                             add /  remove / start / stop
-
-# root@usrv:~/VirtualBox VMs# VBoxManage list vms
-# "ubuntu1804-v0.1" {7116bece-8a7f-411d-9b89-3fd8ecd98003}
-
-# VBoxManage controlvm ubuntu1804-v0.1 acpipowerbutton
-
-# VBoxManage unregistervm  ubuntu1804-v0.1 --delete # delete from disk!!!!! could be skipped
