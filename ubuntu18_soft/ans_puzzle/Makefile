@@ -168,3 +168,9 @@ vb_inst:
 	echo SKIP_TAGS=$(SKIP_TAGS) ;\
 	echo "ansible-playbook vb.yaml -vvv -i hosts.ini --tags $(TAGS)  --skip-tags $(SKIP_TAGS)" ;\
 	ansible-playbook vb.yaml  -v -i hosts.ini
+
+dir_j2_vm:
+	@mkdir -p /mnt/zfs05tb_kvm/shared2vm/u1804-j2
+	@chown -R vnc:vboxusers /mnt/zfs05tb_kvm/shared2vm/u1804-j2
+
+

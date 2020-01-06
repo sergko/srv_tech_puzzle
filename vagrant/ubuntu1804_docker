@@ -68,28 +68,28 @@ Vagrant.configure("2") do |config|
 
     # ubuntu.vm.network "private_network", ip: "10.2.83.210"
     ubuntu.vm.network "public_network", ip: "10.2.83.210"
-    ubuntu.vm.network "forwarded_port", guest: 22, host: 21022, protocol: "tcp", auto_correct: true        #SSH
-    ubuntu.vm.network "forwarded_port", guest: 80, host: 21080, protocol: "tcp", auto_correct: true        #HTTP
+    ubuntu.vm.network "forwarded_port", guest: 22, host: 10022, protocol: "tcp", auto_correct: true        #SSH
+    ubuntu.vm.network "forwarded_port", guest: 80, host: 10080, protocol: "tcp", auto_correct: true        #HTTP
 #    ubuntu.vm.synced_folder "~/Documents/", "/code", create: false
-#    ubuntu.vm.synced_folder "D:/fedora/EXCP/ibi_ui", "/media/sf_ibi_ui", create: true, automount: true
-#    ubuntu.vm.synced_folder "D:/Shared/fedora/EXCP/ibi_ui", "/media/sf_ibi_ui", create: false, automount: true
-#    ubuntu.vm.synced_folder "D:/Shared/fedora/EXCP/ibi_ui_release", "/media/sf_ibi_ui_release", create: false, automount: true
+#    ubuntu.vm.synced_folder "D:/fedora/EXCP/u1804_ui", "/media/sf_u1804_ui", create: true, automount: true
+#    ubuntu.vm.synced_folder "D:/Shared/fedora/EXCP/u1804_ui", "/media/sf_u1804_ui", create: false, automount: true
+#    ubuntu.vm.synced_folder "D:/Shared/fedora/EXCP/u1804_ui_release", "/media/sf_u1804_ui_release", create: false, automount: true
 #    ubuntu.vm.synced_folder "D:/Shared/fedora/EXAN/analytics-api", "/media/sf_analytics-api", create: false, automount: true
 
-#     # ADD SHARE FOLDER IBI
-#     $mount_sharedfolders_ibi = <<-SCRIPT
+#     # ADD SHARE FOLDER u1804
+#     $mount_sharedfolders_u1804 = <<-SCRIPT
 #       set -e
 #       ### Redacted ###
 #       echo "vboxsf" >> /etc/modules
-#       echo "media_sf_ibi_ui /media/sf_ibi_ui vboxsf defaults 0 0" >> /etc/fstab
-#       echo "media_sf_ibi_ui_release /media/sf_ibi_ui_release vboxsf defaults 0 0" >> /etc/fstab
+#       echo "media_sf_u1804_ui /media/sf_u1804_ui vboxsf defaults 0 0" >> /etc/fstab
+#       echo "media_sf_u1804_ui_release /media/sf_u1804_ui_release vboxsf defaults 0 0" >> /etc/fstab
 #       echo "media_sf_analytics_api /media/sf_analytics-api vboxsf defaults 0 0" >> /etc/fstab
-#       mount -t vboxsf media_sf_ibi_ui /media/sf_ibi_ui
-#       mount -t vboxsf media_sf_ibi_ui_release /media/sf_ibi_ui_release
+#       mount -t vboxsf media_sf_u1804_ui /media/sf_u1804_ui
+#       mount -t vboxsf media_sf_u1804_ui_release /media/sf_u1804_ui_release
 #       mount -t vboxsf media_sf_analytics-api /media/sf_analytics-api
 #       ### Redacted ###
 #     SCRIPT
-# #    ubuntu.vm.provision "MOUNTING Shared Folder EXAN Repos", type: "shell", inline: $mount_sharedfolders_ibi, privileged: true
+# #    ubuntu.vm.provision "MOUNTING Shared Folder EXAN Repos", type: "shell", inline: $mount_sharedfolders_u1804, privileged: true
 
     ubuntu.vm.boot_timeout = 300
     ubuntu.vm.graceful_halt_timeout = 300
@@ -129,9 +129,17 @@ Vagrant.configure("2") do |config|
       sudo service docker restart
       echo "DOCKER ENGINE INSTALLED"
     SCRIPT
-   ubuntu.vm.provision "INSTALLING DOCKER ENGINE", type: "shell", inline: $install_docker_1, privileged: false
-
+  ubuntu.vm.provision "INSTALLING DOCKER ENGINE", type: "shell", inline: $install_docker_1, privileged: false
 
   end
+
+  # config.vm.provision "ansible" do |ansible|
+  #   ansible.verbose = "v"
+  #   ansible.playbook = "playbook.yml"
+  # end
+
+  # OR REPEAT THAT PROVISIONER manually as:
+  # $ ansible-playbook -i .vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory playbook.yml
+
   config.vm.define "ubuntu1804", autostart: false
 end

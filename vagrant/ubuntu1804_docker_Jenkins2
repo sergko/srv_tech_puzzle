@@ -1,0 +1,334 @@
+Vagrant.configure("2") do |config|
+
+# end
+
+# Vagrant.configure("2") do |config|
+#   config.vm.hostname = "fedora30"
+  # config.vm.hostname = "ubuntu1804"
+  config.vm.hostname = "u1804-j2"
+  config.vm.box_check_update = true
+  # set auto_update to false, if you do NOT want to check the correct
+  # additions version when booting this machine  config.vbguest.auto_update = false
+
+  config.vbguest.auto_update = false
+  # config.vbguest.iso_path = "#{ENV['HOME']}/Downloads/VBoxGuestAdditions.iso"
+  # or an URL:
+  # config.vbguest.iso_path = "http://company.server/VirtualBox/%{version}/VBoxGuestAdditions.iso"
+  # or relative to the Vagrantfile:
+  # config.vbguest.iso_path = "../relative/path/to/VBoxGuestAdditions.iso"
+######  config.vbguest.iso_path = "C:/Program Files/Oracle/VirtualBox/VBoxGuestAdditions.iso"
+
+  # do NOT download the iso file from a webserver
+  config.vbguest.no_remote = true
+
+###############################################################################################################################################
+#  config.vm.hostname = "u1804-jenkins2"
+config.vm.define "ubuntu1804-j2" do |ubuntu|
+
+  # Base config
+#    ubuntu.vm.box = "ubuntu/trusty64"
+#    ubuntu.vm.box_version = "20181022.0.0"
+#    ubuntu.vm.box = "ubuntu/trusty64"
+#    ubuntu.vm.box_version = "20190429.0.1"
+  ubuntu.vm.box = "ubuntu/bionic64"
+  ubuntu.vm.box_version = "20191218.0.0"
+  ubuntu.disksize.size = '150GB'
+  ubuntu.vm.provider "virtualbox" do |vb|
+    vb.name = "u1804-jenkins2-v1.0.1"
+#      vb.memory = 8192
+#      vb.memory = 11192
+    vb.memory = 1536
+    vb.cpus = 1
+    vb.customize ["modifyvm", :id, "--cpuexecutioncap", "90"]
+##      if !File.exist?(swap_disk_2)
+##        vb.customize ['createhd', '--filename', swap_disk_2, '--size', 6 * 1024]
+##      end
+##      vb.customize ['storageattach', :id, '--storagectl', 'SATAController', '--port', 2, '--device', 0, '--type', 'hdd', '--medium', swap_disk_2]
+#    vb.customize [
+#      "storagectl", :id,
+#      "--name", "SATAController",
+#      "--controller", "IntelAHCI",
+#      "--portcount", "2",
+#      "--hostiocache", "on"
+#  ]
+#    vb.customize [
+#      "storageattach", :id,
+#      "--storagectl", "SATAController",
+#      "--port", "0",
+#      "--device", "0",
+#      "--type", "hdd",
+#      "--discard", "on",
+#      "--nonrotational", "on"   #,
+##      "--medium", "#{ENV["HOME"]}/VirtualBox VMs/Vagrant Test Boxes/#{virtualbox.name}/ubuntu.vdi"
+#  ]
+#    vb.customize [
+#      "storageattach", :id,
+#      "--storagectl", "SATAController",
+#      "--port", "1",
+#      "--device", "0",
+#      "--type", "dvddrive",
+##      "--discard", "on",
+##      "--nonrotational", "on"   #,
+#      "--medium", "emptydrive"
+##      "--medium", "C:/Program Files/Oracle/VirtualBox/VBoxGuestAdditions.iso"
+#  ]
+  end
+
+  # # Copy 192.168.233.222 network interface config file to vm
+# ubuntu.vm.provision "copy-network-config-1", type: "file",
+#   source: "files/50-jenkins2.yaml", destination: "/tmp/50-jenkins2.yaml"
+
+#   # Installing Docker Engine
+#   $network_config_1 = <<-SCRIPT
+#     # Change network adapter name enp0s8 -> eth0 (used in sra_sda ansible scripts)
+# #????      sudo sed -i -e 's/enp0s8/eth0/g' /etc/netplan/50-cloud-init.yaml
+#     # Copy 192.168.233.222 network interface config file
+#     sudo mv /tmp/50-jenkins2.yaml /etc/netplan/
+#   SCRIPT
+#   ubuntu.vm.provision "NETWORK CONFIGURATION", type: "shell", inline: $network_config_1, privileged: false
+
+  # ubuntu.vm.network "private_network", ip: "192.168.233.252"   # ???????????????????????? enp0s8
+  ubuntu.vm.network "public_network", ip: "10.2.83.211"
+  ubuntu.vm.network "forwarded_port", guest: 22, host: 11022, protocol: "tcp", auto_correct: false        #SSH
+  # ubuntu.vm.network "forwarded_port", guest: 80, host: 11080, protocol: "tcp", auto_correct: false        #HTTP
+  # ubuntu.vm.network "forwarded_port", guest: 5432, host: 15432, protocol: "tcp", auto_correct: true    #PSQL
+  ubuntu.vm.network "forwarded_port", guest: 8080, host: 11080, protocol: "tcp", auto_correct: true  #JENKINS 8080 native
+  ubuntu.vm.synced_folder "/mnt/zfs05tb_kvm/shared2vm/u1804-j2", "/mnt/data", create: true, automount: true
+
+#     # ADD SHARE FOLDER u1804
+#     $mount_sharedfolders_u1804 = <<-SCRIPT
+#       set -e
+#       ### Redacted ###
+#       echo "vboxsf" >> /etc/modules
+#       echo "media_sf_u1804_ui /media/sf_u1804_ui vboxsf defaults 0 0" >> /etc/fstab
+#       echo "media_sf_u1804_ui_release /media/sf_u1804_ui_release vboxsf defaults 0 0" >> /etc/fstab
+#       echo "media_sf_analytics_api /media/sf_analytics-api vboxsf defaults 0 0" >> /etc/fstab
+#       mount -t vboxsf media_sf_u1804_ui /media/sf_u1804_ui
+#       mount -t vboxsf media_sf_u1804_ui_release /media/sf_u1804_ui_release
+#       mount -t vboxsf media_sf_analytics-api /media/sf_analytics-api
+#       ### Redacted ###
+#     SCRIPT
+# #    ubuntu.vm.provision "MOUNTING Shared Folder EXAN Repos", type: "shell", inline: $mount_sharedfolders_u1804, privileged: true
+
+#NEED TO ADD automount in VM Config manually + check names like as "u1804_ui" etc
+  # ADD SHARE FOLDER u1804
+  $mount_sharedfolders_u1804 = <<-SCRIPT
+    set -e
+    ### Redacted ###
+    echo "vboxsf" >> /etc/modules
+  SCRIPT
+#    ubuntu.vm.provision "MOUNTING Shared Folder EXAN Repos", type: "shell", inline: $mount_sharedfolders_u1804, privileged: true
+
+  ubuntu.vm.boot_timeout = 300
+  ubuntu.vm.graceful_halt_timeout = 300
+  ubuntu.ssh.insert_key = true
+
+  # Copy ssh public key from host and append it to authorized_keys in guest
+  ubuntu.vm.provision "ssh_keys_provision-1", type: "file",
+    source: "~/.ssh/id_rsa.pub", destination: "/tmp/host_id_rsa.pub"
+  ubuntu.vm.provision "ssh_keys_provision-2", type: "shell",
+    inline: "cat /tmp/host_id_rsa.pub >> /home/vagrant/.ssh/authorized_keys"
+  # Copy ssh public key from host and append it to authorized_keys in guest
+  ubuntu.vm.provision "ssh_keys_provision-3", type: "file",
+    source: "files/id_rsa_vagrant", destination: "/tmp/id_rsa_vagrant"
+  ubuntu.vm.provision "ssh_keys_provision-4", type: "file",
+    source: "files/id_rsa_vagrant.pub", destination: "/tmp/id_rsa_vagrant.pub"
+  ubuntu.vm.provision "ssh_keys_provision-4-1", type: "shell",
+    inline: "cat /tmp/id_rsa_vagrant.pub >> /home/vagrant/.ssh/authorized_keys"
+  # ubuntu.vm.provision "ssh_keys_provision-5", type: "file",
+  #   source: "files/id_rsa_skovb_ss.pub", destination: "/tmp/id_rsa_skovb_ss.pub"
+  # ubuntu.vm.provision "ssh_keys_provision-5-1", type: "shell",
+  #   inline: "cat /tmp/id_rsa_skovb_ss.pub >> /home/vagrant/.ssh/authorized_keys"
+
+  # Installing Docker Engine
+  $install_docker_1 = <<-SCRIPT
+#      sudo apt-get update
+#      sudo apt-get upgrade -y
+    sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+    sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+    sudo apt-get update
+    sudo apt-get upgrade -y
+    sudo apt-get install -y linux-image-extra-$(uname -r) linux-image-extra-virtual  linux-headers-generic linux-headers-$(uname -r)
+    sudo apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common #ssl-cert
+    # root@np:/etc/apt# apt-cache madison docker-ce
+    # docker-ce | 5:19.03.5~3-0~ubuntu-bionic | https://download.docker.com/linux/ubuntu bionic/stable amd64 Packages
+    # docker-ce | 5:19.03.2~3-0~ubuntu-bionic | https://download.docker.com/linux/ubuntu bionic/stable amd64 Packages
+    sudo apt-get install -y docker-ce=5:19.03.2~3-0~ubuntu-bionic docker-ce-cli=5:19.03.2~3-0~ubuntu-bionic containerd.io #tested on ubuntu 19.10 1Jan19
+    # sudo apt-get install -y docker-ce=18.06.0~ce~3-0~ubuntu
+#      sudo sed -i -e 's/#DOCKER_OPTS=\"--dns 8.8.8.8 --dns 8.8.4.4\"/DOCKER_OPTS=\"--insecure-registry 10.12.228.6\"/g' /etc/default/docker
+#      sudo sed -i -e 's/#DOCKER_OPTS=\"--dns 8.8.8.8 --dns 8.8.4.4\"/DOCKER_OPTS=\"--insecure-registry 192.168.240.174:65000 --insecure-registry 10.12.228.6\"/g' /etc/default/docker
+#      sudo sed -i -e 's/#DOCKER_OPTS=\"--dns 8.8.8.8 --dns 8.8.4.4\"/DOCKER_OPTS=\"--insecure-registry 192.168.240.173:50444 --insecure-registry 10.12.228.6\"/g' /etc/default/docker
+    sudo mkdir -p /mnt/data/docker
+    # sudo sed -i -e 's/#DOCKER_OPTS=\"--dns 8.8.8.8 --dns 8.8.4.4\"/DOCKER_OPTS=\"-g \/mnt\/data\/docker --insecure-registry 192.168.240.173:50444 --insecure-registry 10.12.228.6  --insecure-registry 10.12.228.30 --insecure-registry dtr.site.com\"/g' /etc/default/docker
+    sudo cat /etc/default/docker
+    sudo service docker restart
+    echo "DOCKER ENGINE INSTALLED"
+  SCRIPT
+  ubuntu.vm.provision "INSTALLING DOCKER ENGINE", type: "shell", inline: $install_docker_1, privileged: false
+
+  # Installing OpenSSL (from sources)
+  $install_openssl_1 = <<-SCRIPT
+    cd /tmp && wget https://www.openssl.org/source/openssl-1.1.1.tar.gz
+    tar xf openssl-1.1.1.tar.gz && cd openssl-1.1.1/
+    sudo apt-get update
+#      sudo apt-get upgrade -y
+    sudo apt-get install -y build-essential libpq-dev libssl-dev libffi-dev zlib1g-dev
+    sudo ./config
+    sudo make
+    sudo make install
+    sudo cp /usr/local/lib/libcrypto.so.1.1 /usr/lib/
+    sudo cp /usr/local/lib/libssl.so.1.1 /usr/lib/
+    sudo cp /usr/local/lib/libcrypto.a /usr/lib/
+    sudo cp /usr/local/lib/libssl.a /usr/lib/
+    sudo ln -s /usr/lib/libcrypto.so.1.1 /usr/lib/libcrypto.so
+    sudo ln -s /usr/lib/libssl.so.1.1 /usr/lib/libssl.so
+    sudo ldconfig
+    cd ~ && sudo rm -rf /tmp/openssl-1.1.1
+    echo "OPENSSL INSTALLED"
+  SCRIPT
+#  ubuntu.vm.provision "INSTALLING OPENSSL", type: "shell", inline: $install_openssl_1, privileged: false
+
+  # Installing ZSH (from sources) and Oh-My-Zsh
+  $install_zsh_1 = <<-SCRIPT
+    cd /tmp && wget http://www.zsh.org/pub/zsh-5.6.2.tar.xz
+    tar xf zsh-5.6.2.tar.xz && cd zsh-5.6.2/
+    sudo apt-get update
+#      sudo apt-get upgrade -y
+    sudo apt-get install -y libncurses5-dev libncursesw5-dev git-core
+    ./configure --without-tcsetpgrp
+    make
+    sudo make install
+    cd ~ && rm -rf /tmp/zsh-5.6.2
+    command -v zsh | sudo tee -a /etc/shells
+    sudo sh -c "$(curl -fsSL --insecure https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+    sudo chsh -s /usr/local/bin/zsh vagrant
+    sudo chown vagrant:vagrant -R ~/.oh-my-zsh
+    sudo chown vagrant:vagrant ~/.zsh*
+    sudo chown vagrant:vagrant /home/vagrant/
+    sudo sed -i -e 's/ZSH_THEME=\"robbyrussell\"/ZSH_THEME=\"steeef\"/' ~/.zshrc
+    echo "ZSH INSTALLED"
+  SCRIPT
+#    ubuntu.vm.provision "INSTALLING ZSH", type: "shell", inline: $install_zsh_1, privileged: false
+
+  # Installing Python 3.7 (from sources)
+  $install_python37_1 = <<-SCRIPT
+    cd /tmp && wget https://www.python.org/ftp/python/3.7.1/Python-3.7.1.tgz
+    tar xf Python-3.7.1.tgz && cd Python-3.7.1/
+#      sudo apt-get update
+#      sudo apt-get upgrade -y
+    sudo apt-get install -y build-essential libpq-dev libssl-dev libffi-dev zlib1g-dev
+    ./configure
+    sudo make
+    sudo make install
+    cd ~ && sudo rm -rf /tmp/Python-3.7.1
+    sudo pip3.7 install --upgrade pip
+    echo "PYTHON 3.7 INSTALLED"
+  SCRIPT
+#    ubuntu.vm.provision "INSTALLING PYTHON 3.7", type: "shell", inline: $install_python37_1, privileged: false
+
+  # Installing Python 3.6 (from sources)
+  $install_python36_7 = <<-SCRIPT
+    cd /tmp && wget https://www.python.org/ftp/python/3.6.7/Python-3.6.7.tgz
+    tar xf Python-3.6.7.tgz && cd Python-3.6.7/
+    sudo apt-get update
+#      sudo apt-get upgrade -y
+    sudo apt-get install -y build-essential libpq-dev libssl-dev libffi-dev zlib1g-dev
+    sudo ./configure CPPFLAGS="-I/usr/local/include" LDFLAGS="-L/usr/local/lib"
+    sudo make
+    sudo make install
+    cd ~ && sudo rm -rf /tmp/Python-3.6.7
+    sudo pip3.6 install --upgrade pip
+    echo "PYTHON 3.6 INSTALLED"
+  SCRIPT
+#    ubuntu.vm.provision "INSTALLING PYTHON 3.6", type: "shell", inline: $install_python36_7, privileged: false
+
+  # Installing VIRTUALENVWRAPPER etc...
+  #https://docs.python-guide.org/dev/virtualenvs/
+  $install_virtualenv_1 = <<-SCRIPT
+    sudo pip3 install virtualenvwrapper docker psycopg2-binary
+    echo "" >> ~/.zshrc
+    echo "export WORKON_HOME=~/.virtualenvs" >> ~/.zshrc
+    echo "export VIRTUALENVWRAPPER_PYTHON=$(which python3)" >> ~/.zshrc
+    echo "export VIRTUALENVWRAPPER_VIRTUALENV=$(which virtualenv)" >> ~/.zshrc
+    echo "export VIRTUALENVWRAPPER_VIRTUALENV_ARGS='--no-site-packages'" >> ~/.zshrc
+    echo "export MSP_DOCKER_IP=192.168.233.3" >> ~/.zshrc
+    echo "source /usr/local/bin/virtualenvwrapper.sh" >> ~/.zshrc
+    mkdir -p ~/.oh-my-zsh/completions
+    curl -L --insecure https://raw.githubusercontent.com/docker/docker-ce/18.06/components/cli/contrib/completion/zsh/_docker > ~/.oh-my-zsh/completions/_docker
+  SCRIPT
+  ubuntu.vm.provision "INSTALLING VIRTUALENVWRAPPER ETC...", type: "shell", inline: $install_virtualenv_1, privileged: false
+
+  # Installing u1804 requirements
+  $install_u1804_req = <<-SCRIPT
+    sudo fallocate -l 6G /swap0
+    sudo chmod 600 /swapfile
+    sudo mkswap  /swap0
+    sudo swapon /swap0
+    sudo echo '/swap0 none swap defaults 0 0' >> /etc/fstab
+    sudo usermod -aG docker vagrant
+    cp /tmp/id_rsa_vagrant /home/vagrant/.ssh/id_rsa
+#      cat /tmp/id_rsa_vagrant.pub >> /home/vagrant/.ssh/authorized_keys
+    sudo useradd -m -s/bin/bash --groups sudo,docker developer
+    sudo usermod -p '$6$DA14EzqF$HHvuLgtZ/tpL1yDdcu9IshoAwt3Z2XBYs/4s.lITHm69XkrN8ihMcn0yjSYlzRgJZim4R421QlZVvp8Uygqxz1' developer
+    sudo echo 'developer ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/developer
+    mkdir -p /home/developer/.ssh
+    sudo cp /tmp/id_rsa_vagrant /home/developer/.ssh/id_rsa && chmod 0600 /home/developer/.ssh/id_rsa
+    sudo cat /tmp/id_rsa_vagrant.pub >> /home/developer/.ssh/authorized_keys
+    # sudo cat /tmp/id_rsa_skovb_ss.pub >> /home/developer/.ssh/authorized_keys
+    sudo chown -R developer:developer /home/developer/.ssh && chmod 0700 /home/developer/.ssh/id_rsa
+    # Disabling systemd as default DSN resolver (it is not used by Docker)
+# sudo echo 'nameserver 8.8.8.8' >> /etc/resolvconf/resolv.conf.d/base
+# sudo echo 'nameserver 8.8.4.4' >> /etc/resolvconf/resolv.conf.d/base
+    sudo cat /etc/resolvconf/resolv.conf.d/base
+    sudo resolvconf -u
+    #fix /etc/hosts for short DNS name instead of FQDN from out of VPN
+    # sudo echo '10.12.225.19 u1804-dev-cloudera1' >> /etc/hosts
+    # sudo echo '127.0.0.1 u1804-j2' >> /etc/hosts
+    echo "sudo cat /etc/hosts :" ; sudo cat /etc/hosts
+#      sudo sed -i -e 's/vagrant-ubuntu-trusty-64/u1804-vagrant/g' /etc/hosts
+#      sudo sed -i -e 's/vagrant-ubuntu-trusty-64/u1804-vagrant/g' /etc/hostname
+    # sudo echo 'u1804-j2' > /etc/hostname
+    echo "sudo cat /etc/hostname :"; sudo cat /etc/hostname
+#      rename pip that looked to python3
+#      test -f /usr/local/bin/pip && 'grep -c "/usr/local/bin/python3"' -gt 0 && \
+    sudo apt-get install -y python-pip python3-pip mc
+    echo "sudo which python :" ; sudo which python
+    echo "sudo which python2 :" ; sudo which python2
+    echo "sudo which python3 :" ; sudo which python3
+    echo "sudo which pip :" ; sudo which pip
+    echo "sudo which pip2 :" ; sudo which pip2
+    echo "sudo which pip3 :" ; sudo which pip3
+    echo "sudo mv /usr/local/bin/pip /usr/local/bin/pip_3 :" ; sudo mv /usr/local/bin/pip /usr/local/bin/pip_3
+    sudo apt-get install -y python-pip zerofree
+    sudo pip install docker runlike
+    sudo pip3 install docker runlike
+    sudo apt remove rpcbind -y
+    sudo curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py"
+    sudo python get-pip.py
+    sudo ln -s /usr/local/bin/pip /usr/bin/pip
+    sudo pip install psycopg2-binary
+    #sudo pip install python-psycopg2 #psycopg2
+    #sudo pip3 install python3-apt
+    echo "INSTALLING u1804_REQ_Jenkins2 DONE!!!"
+  SCRIPT
+  ubuntu.vm.provision "INSTALLING u1804_REQ", type: "shell", inline: $install_u1804_req, privileged: true
+
+  # DOCKER RUN JENKINS2
+  $install_jenkins_docker = <<-SCRIPT
+    # mkdir -p /mnt/data/jenkins_wp
+    mkdir -p /mnt/data/Code
+    chown -R 1000:1000 /mnt/data/jenkins_wp/Code
+    mkdir -p /mnt/data/jenkins_wp/backup
+    chown -R 1000:1000 /mnt/data/jenkins_wp
+    docker run -d \
+    --name=u1804-jenkins2 \
+    -v /mnt/data/jenkins_wp:/var/jenkins_home \
+    -p 8080:8080 -p 50000:50000 \
+    jenkins/jenkins:lts
+  SCRIPT
+  ubuntu.vm.provision "DOCKER RUN JENKINS2", type: "shell", inline: $install_jenkins_docker, privileged: true
+
+end
+
+config.vm.define "ubuntu1804-j2", autostart: false
+end
