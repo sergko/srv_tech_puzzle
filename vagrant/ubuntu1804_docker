@@ -129,7 +129,7 @@ Vagrant.configure("2") do |config|
       sudo service docker restart
       echo "DOCKER ENGINE INSTALLED"
     SCRIPT
-   ubuntu.vm.provision --provision, type: "shell", inline: $install_docker_1, privileged: false
+   ubuntu.vm.provision "INSTALLING DOCKER ENGINE", type: "shell", inline: $install_docker_1, privileged: false
 
 
   end
