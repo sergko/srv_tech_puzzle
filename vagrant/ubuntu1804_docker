@@ -22,7 +22,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.define "ubuntu1804" do |ubuntu|
     ubuntu.vm.box = "ubuntu/bionic64"
-    ubuntu.vm.box_version = "v20191218.0.0"
+    ubuntu.vm.box_version = "20191218.0.0"
 
     ubuntu.disksize.size = '150GB'
     ubuntu.vm.provider "virtualbox" do |vb|
@@ -121,7 +121,7 @@ Vagrant.configure("2") do |config|
       # root@np:/etc/apt# apt-cache madison docker-ce
       # docker-ce | 5:19.03.5~3-0~ubuntu-bionic | https://download.docker.com/linux/ubuntu bionic/stable amd64 Packages
       # docker-ce | 5:19.03.2~3-0~ubuntu-bionic | https://download.docker.com/linux/ubuntu bionic/stable amd64 Packages
-      sudo apt-get install -y 19.03.2~3-0~ubuntu-bionic #tested on ubuntu 19.10 1Jan19
+      sudo apt-get install -y docker-ce=5:19.03.2~3-0~ubuntu-bionic docker-ce-cli=5:19.03.2~3-0~ubuntu-bionic containerd.io #tested on ubuntu 19.10 1Jan19
       # sudo apt-get install -y docker-ce=18.06.0~ce~3-0~ubuntu
 #      sudo sed -i -e 's/#DOCKER_OPTS=\"--dns 8.8.8.8 --dns 8.8.4.4\"/DOCKER_OPTS=\"--insecure-registry 10.12.228.6\"/g' /etc/default/docker
       # sudo sed -i -e 's/#DOCKER_OPTS=\"--dns 8.8.8.8 --dns 8.8.4.4\"/DOCKER_OPTS=\"--insecure-registry 192.168.240.174:65000 --insecure-registry 10.12.228.6\"/g' /etc/default/docker
